@@ -1,0 +1,6 @@
+@PTS.CodeExecutionService_HostAddress = http://localhost:5105
+
+GET {{PTS.CodeExecutionService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

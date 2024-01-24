@@ -1,0 +1,6 @@
+@PTS.PersonRightsManagerService_HostAddress = http://localhost:5234
+
+GET {{PTS.PersonRightsManagerService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

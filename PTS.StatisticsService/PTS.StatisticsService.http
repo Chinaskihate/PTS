@@ -1,0 +1,6 @@
+@PTS.StatisticsService_HostAddress = http://localhost:5100
+
+GET {{PTS.StatisticsService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
