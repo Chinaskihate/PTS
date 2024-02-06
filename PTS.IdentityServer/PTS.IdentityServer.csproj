@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>dbae2007-ca24-46f0-8eba-65208544a58e</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Duende.IdentityServer" Version="7.0.0" />
+		<PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.0.0" />
+		<PackageReference Include="Duende.IdentityServer.EntityFramework" Version="7.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Data\Migrations\" />
+	</ItemGroup>
+</Project>
