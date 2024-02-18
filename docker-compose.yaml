@@ -1,5 +1,9 @@
+networks:
+  pts-dev:
+    driver: bridge
 services:
   db:
+    container_name: pts-db
     environment:
       - POSTGRES_PASSWORD=password
     image: postgres:15
@@ -7,8 +11,10 @@ services:
       - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - pts-dev
   pg-admin:
-    container_name: pgadmin4_container
+    container_name: pts-pgadmin
     image: dpage/pgadmin4
     restart: always
     environment:
@@ -20,45 +26,64 @@ services:
       - pg-admin:/var/lib/pgadmin4/data
     ports:
       - "5050:80"
-  identityserver:
+    networks:
+      - pts-dev
+  auth-api:
+    container_name: pts-auth-api
     build:
       context: .
-      dockerfile: ./PTS.IdentityServer/Dockerfile
-    depends_on:
-      - db
-    entrypoint: /bin/sh -c "update-ca-certificates && dotnet PTS.IdentityServer.dll"
+      dockerfile: PTS.AuthAPI/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:7000
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
-      - CONNECTIONSTRINGS__IDENTITY=Server=db;Port=5432;Database=identity;User Id=postgres;Password=password;
-      - CONNECTIONSTRINGS__IDENTITYSERVER=Server=db;Port=5432;Database=identityserver;User Id=postgres;Password=password;
-    ports:
-      - "7000:7000"
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
-  statistics-service:
-    build:
-      context: .
-      dockerfile: ./PTS.StatisticsService/Dockerfile
-    depends_on:
-      - identityserver
-    entrypoint: /bin/sh -c "update-ca-certificates && dotnet PTS.StatisticsService.dll"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:7002
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
-      - AUTHENTICATION__AUTHORITY=https://identityserver:7000
-      - AUTHENTICATION__CLIENTID=4ecc4153-daf9-4eca-8b60-818a63637a81
-      - AUTHENTICATION__CLIENTSECRET=secret
     ports:
       - "7002:7002"
+    depends_on:
+      - db
     volumes:
       - ./localhost.pfx:/https/localhost.pfx:ro
       - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+    restart: always
+  # identityserver:
+  #   build:
+  #     context: .
+  #     dockerfile: ./PTS.IdentityServer/Dockerfile
+  #   depends_on:
+  #     - db
+  #   entrypoint: /bin/sh -c "update-ca-certificates && dotnet PTS.IdentityServer.dll"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_URLS=https://+:7000
+  #     - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+  #     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+  #     - CONNECTIONSTRINGS__IDENTITY=Server=db;Port=5432;Database=identity;User Id=postgres;Password=password;
+  #     - CONNECTIONSTRINGS__IDENTITYSERVER=Server=db;Port=5432;Database=identityserver;User Id=postgres;Password=password;
+  #   ports:
+  #     - "7000:7000"
+  #   volumes:
+  #     - ./localhost.pfx:/https/localhost.pfx:ro
+  #     - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+  # statistics-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./PTS.StatisticsService/Dockerfile
+  #   depends_on:
+  #     - identityserver
+  #   entrypoint: /bin/sh -c "update-ca-certificates && dotnet PTS.StatisticsService.dll"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_URLS=https://+:7002
+  #     - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+  #     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+  #     - AUTHENTICATION__AUTHORITY=https://identityserver:7000
+  #     - AUTHENTICATION__CLIENTID=4ecc4153-daf9-4eca-8b60-818a63637a81
+  #     - AUTHENTICATION__CLIENTSECRET=secret
+  #   ports:
+  #     - "7002:7002"
+  #   volumes:
+  #     - ./localhost.pfx:/https/localhost.pfx:ro
+  #     - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
 volumes:
   db:
   pg-admin:

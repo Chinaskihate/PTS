@@ -1,0 +1,6 @@
+@PTS.AuthAPI_HostAddress = http://localhost:5165
+
+GET {{PTS.AuthAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
