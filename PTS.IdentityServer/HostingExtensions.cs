@@ -1,13 +1,14 @@
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using Duende.IdentityServer.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
-using PTS.IdentityServer.Data;
 using PTS.IdentityServer.Handlers;
-using PTS.IdentityServer.Models;
+using PTS.Persistence.DbContexts;
+using PTS.Persistence.Models.Users;
 using Serilog;
 using System.Reflection;
 
@@ -19,21 +20,28 @@ internal static class HostingExtensions
         System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
         IdentityModelEventSource.ShowPII = true;
 
+        builder.Services
+            .AddControllers();
+        builder.Services.AddHttpContextAccessor();
         builder.Host.UseSerilog((ctx, lc) => lc
             .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
             .Enrich.FromLogContext()
             .ReadFrom.Configuration(ctx.Configuration));
 
-        builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, dbContextOptionsBuilder) =>
+        builder.Services.AddDbContext<IdentityServerDbContext>((serviceProvider, dbContextOptionsBuilder) =>
         {
             dbContextOptionsBuilder.UseNpgsql(
                 serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString("Identity"),
                 NpgsqlOptionsAction);
         });
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        //builder.Services
+        //    .AddControllers();
+
+        builder.Services
+            .AddIdentity<ApplicationUser, IdentityRole>()
             .AddDefaultTokenProviders()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<IdentityServerDbContext>();
 
         builder.Services.AddIdentityServer(identityServerOptions =>
         {
@@ -65,8 +73,13 @@ internal static class HostingExtensions
 
         app.UseIdentityServer();
 
+        //app.MapControllers();
         app.MapPost("/api/login", AccountHandler.LoginAsync);
         app.MapPost("/api/logout", AccountHandler.LogoutAsync);
+        app.MapPost("/api/register", AccountHandler.RegisterAsync);
+        app.MapPost("/api/admin/role", AdminHandler.SetRole);
+        app.MapPost("/api/admin/role2", AdminHandler.SetRole2);
+        app.MapPost("/api/admin/role3", AdminHandler.SetRole3);
 
         app.MapFallbackToFile("index.html");
 
@@ -74,7 +87,7 @@ internal static class HostingExtensions
         {
             using var scope = app.Services.CreateScope();
 
-            await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.MigrateAsync();
+            await scope.ServiceProvider.GetRequiredService<IdentityServerDbContext>().Database.MigrateAsync();
             await scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>().Database.MigrateAsync();
             await scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.MigrateAsync();
 

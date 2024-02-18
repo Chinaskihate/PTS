@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using PTS.IdentityServer.Data;
+using PTS.Persistence.DbContexts;
 
 #nullable disable
 
-namespace PTS.IdentityServer.Data.Migrations.Identity.ApplicationDb
+namespace PTS.IdentityServer.Data.Migrations.Identity.IdentityDb
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240205200640_InitialIdentityApplicationDbMigration")]
-    partial class InitialIdentityApplicationDbMigration
+    [DbContext(typeof(IdentityServerDbContext))]
+    [Migration("20240214134427_InitialIdentityIdentityServerDbMigration")]
+    partial class InitialIdentityIdentityServerDbMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -157,7 +157,7 @@ namespace PTS.IdentityServer.Data.Migrations.Identity.ApplicationDb
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PTS.IdentityServer.Models.ApplicationUser", b =>
+            modelBuilder.Entity("PTS.Persistence.Models.Users.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -238,7 +238,7 @@ namespace PTS.IdentityServer.Data.Migrations.Identity.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("PTS.IdentityServer.Models.ApplicationUser", null)
+                    b.HasOne("PTS.Persistence.Models.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -247,7 +247,7 @@ namespace PTS.IdentityServer.Data.Migrations.Identity.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("PTS.IdentityServer.Models.ApplicationUser", null)
+                    b.HasOne("PTS.Persistence.Models.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -262,7 +262,7 @@ namespace PTS.IdentityServer.Data.Migrations.Identity.ApplicationDb
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PTS.IdentityServer.Models.ApplicationUser", null)
+                    b.HasOne("PTS.Persistence.Models.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -271,7 +271,7 @@ namespace PTS.IdentityServer.Data.Migrations.Identity.ApplicationDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("PTS.IdentityServer.Models.ApplicationUser", null)
+                    b.HasOne("PTS.Persistence.Models.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

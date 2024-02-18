@@ -1,11 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dotnet
 WORKDIR /src
-COPY ["PTS.IdentityServer/PTS.IdentityServer.csproj", "PTS.IdentityServer/"]
-RUN dotnet restore "PTS.IdentityServer/PTS.IdentityServer.csproj"
-COPY . .
-WORKDIR "/src/PTS.IdentityServer"
-RUN dotnet build "PTS.IdentityServer.csproj" -c Release -o /app/build
-RUN dotnet publish "PTS.IdentityServer.csproj" -c Release -o /app/publish
+COPY "./PTS.IdentityServer/PTS.IdentityServer.csproj" "./PTS.IdentityServer/PTS.IdentityServer.csproj"
+RUN dotnet restore "./PTS.IdentityServer/PTS.IdentityServer.csproj"
+COPY "./PTS.IdentityServer" "./PTS.IdentityServer"
+RUN dotnet publish "./PTS.IdentityServer/PTS.IdentityServer.csproj" -c Release -o /app/publish
 
 FROM node:lts AS node
 WORKDIR /src

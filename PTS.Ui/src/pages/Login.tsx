@@ -14,7 +14,7 @@ export default function Login() {
 
       const response = await fetch("/api/login", {
         body: JSON.stringify({
-          userName: formData.get("userName"),
+          email: formData.get("email"),
           password: formData.get("password"),
           returnUrl: searchParams.get("returnUrl"),
         }),
@@ -38,11 +38,11 @@ export default function Login() {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="userName">Username: </label>
+        <label htmlFor="email">Email: </label>
         <input
-          autoComplete="username"
-          id="userName"
-          name="userName"
+          autoComplete="email"
+          id="email"
+          name="email"
           required
           type="text"
         />
