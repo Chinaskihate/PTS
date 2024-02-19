@@ -45,6 +45,23 @@ services:
       - ./localhost.pfx:/https/localhost.pfx:ro
       - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
+  admin-api:
+    container_name: pts-admin-api
+    build:
+      context: .
+      dockerfile: PTS.AdminAPI/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+:7003
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    ports:
+      - "7003:7003"
+    depends_on:
+      - db
+    volumes:
+      - ./localhost.pfx:/https/localhost.pfx:ro
+      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+    restart: always
   # identityserver:
   #   build:
   #     context: .

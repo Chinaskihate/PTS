@@ -1,4 +1,4 @@
-﻿using PTS.AuthAPI.Models;
+﻿using PTS.Persistence.Models.Users;
 
 namespace PTS.AuthAPI.Service.IService;
 

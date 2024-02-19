@@ -1,25 +1,32 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using PTS.AuthAPI.Data;
-using PTS.AuthAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using PTS.AuthAPI.Models.Dto;
 using PTS.AuthAPI.Service.IService;
+using PTS.Contracts.Auth;
+using PTS.Contracts.Users;
+using PTS.Persistence.DbContexts;
+using PTS.Persistence.Models.Users;
+using Serilog;
 
 namespace PTS.AuthAPI.Service;
 
 public class AuthService(
-    AppDbContext db,
+    IDbContextFactory<UserDbContext> dbFactory,
     UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole> roleManager,
-    IJwtTokenGenerator tokenGenerator) : IAuthService
+    IJwtTokenGenerator tokenGenerator,
+    ITokenStorer tokenStorer) : IAuthService
 {
-    private readonly AppDbContext _db = db;
+    private readonly IDbContextFactory<UserDbContext> _dbFactory = dbFactory;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IJwtTokenGenerator _tokenGenerator = tokenGenerator;
+    private readonly ITokenStorer _tokenStorer = tokenStorer;
 
     public async Task<bool> AssignRole(string email, string roleName)
     {
-        var user = _db.ApplicationUsers.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+        using var context = _dbFactory.CreateDbContext();
+        var user = context.ApplicationUsers.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
         if (user != null)
         {
             if (!(await _roleManager.RoleExistsAsync(roleName)))
@@ -34,11 +41,18 @@ public class AuthService(
         return false;
     }
 
+    public async Task<bool> CheckToken(string token)
+    {
+        return _tokenStorer.CheckToken(token);
+    }
+
     public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
     {
-        var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+        using var context = _dbFactory.CreateDbContext();
+        var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
         bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-        if (user == null || !isValid)
+        context.Entry(user).Reload();
+        if (user == null || !isValid || user.IsBanned)
         {
             return new LoginResponseDto()
             {
@@ -49,13 +63,15 @@ public class AuthService(
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = _tokenGenerator.GenerateToken(user, roles);
+        _tokenStorer.AddOrUpdateToken(user, token);
 
         UserDto userDto = new()
         {
             Email = user.Email,
             Id = user.Id,
             TelegramId = user.TelegramId,
-            PhoneNumber = user.PhoneNumber
+            PhoneNumber = user.PhoneNumber,
+            IsBanned = user.IsBanned,
         };
 
         LoginResponseDto loginResponseDto = new()
@@ -83,26 +99,37 @@ public class AuthService(
             var result = await _userManager.CreateAsync(user, registrationRequestDto.Password);
             if (result.Succeeded)
             {
-                var userToReturn = _db.ApplicationUsers.First(u => u.UserName == registrationRequestDto.Email);
+                using var context = _dbFactory.CreateDbContext();
+                var userToReturn = context.ApplicationUsers.First(u => u.UserName == registrationRequestDto.Email);
 
                 UserDto userDto = new()
                 {
                     Email = userToReturn.Email,
                     Id = userToReturn.Id,
                     TelegramId = userToReturn.TelegramId,
-                    PhoneNumber = userToReturn.PhoneNumber
+                    PhoneNumber = userToReturn.PhoneNumber,
+                    IsBanned = userToReturn.IsBanned,
                 };
 
                 return string.Empty;
             }
             else
             {
+                Log.Error(result.Errors.FirstOrDefault().Description);
                 return result.Errors.FirstOrDefault().Description;
             }
         }
         catch (Exception ex)
         {
+            Log.Error(ex, ex.Message);
             return "Failed:" + ex.Message;
         }
+    }
+
+    public async Task<bool> RevokeToken(LoginRequestDto loginRequestDto)
+    {
+        using var context = _dbFactory.CreateDbContext();
+        var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+        return user == null ? false : _tokenStorer.RemoveToken(user);
     }
 }

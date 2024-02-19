@@ -1,10 +1,11 @@
 ﻿namespace PTS.Contracts.Users;
-public enum UserRole
+public static class UserRoles
 {
-    Student = 0,
-    ThemeManager = 1,
-    TaskManager = 2,
-    TestManager = 3,
-    Admin = 4,
-    RootAdmin = 5,
+    public const string Student = "STUDENT";
+    public const string ThemeManager = "THEME_MANAGER";
+    public const string TaskManager = "TASK_MANAGER";
+    public const string TestManager = "TEST_MANAGER";
+    public const string Admin = "ADMIN";
+    public const string RootAdmin = "ROOT_ADMIN";
+    public const string AnyAdmin = Admin + "," + RootAdmin;
 }

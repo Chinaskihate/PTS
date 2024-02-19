@@ -1,4 +1,6 @@
-﻿namespace PTS.AuthAPI.Models.Dto;
+﻿using PTS.Contracts.Users;
+
+namespace PTS.AuthAPI.Models.Dto;
 
 public class LoginResponseDto
 {

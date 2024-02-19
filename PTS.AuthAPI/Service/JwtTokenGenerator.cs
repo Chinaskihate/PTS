@@ -2,6 +2,8 @@
 using Microsoft.IdentityModel.Tokens;
 using PTS.AuthAPI.Models;
 using PTS.AuthAPI.Service.IService;
+using PTS.Backend.Auth;
+using PTS.Persistence.Models.Users;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

@@ -1,25 +1,70 @@
-var builder = WebApplication.CreateBuilder(args);
+using PTS.Backend.Extensions;
+using PTS.Backend.Mappings;
+using PTS.Backend.Middlewares;
+using PTS.Backend.Service;
+using PTS.Backend.Service.IService;
+using PTS.Backend.Utils;
+using PTS.Persistence.Helpers;
+using Serilog;
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+Log.Information("Starting up");
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog((ctx, lc) => lc
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
+        .Enrich.FromLogContext()
+        .ReadFrom.Configuration(ctx.Configuration));
+
+    SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
+
+    // Add services to the container.
+    builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
+    builder.Services.AddUserMapper();
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    builder.Services.AddControllers();
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddHttpClient();
+    builder.Services.AddHttpClient<IAuthService, AuthService>();
+
+    builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+    builder.Services.AddScoped<IBaseService, BaseService>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwagger(withBearerAuth: true);
+
+    builder.AddAppAuthentication();
+    builder.Services.AddAuthorization();
+
+    var app = builder.Build();
+
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    app.UseHttpsRedirection();
+    app.UseMiddleware<CheckTokenMiddleware>();
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    MigrationHelper.ApplyUserMigration(app.Services);
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}
