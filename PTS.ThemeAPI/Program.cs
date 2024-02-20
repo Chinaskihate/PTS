@@ -1,11 +1,10 @@
-using PTS.Backend.Extensions;
-using PTS.Backend.Mappings;
-using PTS.Backend.Middlewares;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
 using PTS.Backend.Utils;
-using PTS.Persistence.Helpers;
+using PTS.Backend.Extensions;
 using Serilog;
+using PTS.Backend.Middlewares;
+using PTS.Persistence.Helpers;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -25,8 +24,7 @@ try
     SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
 
     // Add services to the container.
-    builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
-    builder.Services.AddUserMapper();
+    builder.Services.AddThemeDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
@@ -55,7 +53,7 @@ try
 
     app.MapControllers();
 
-    //MigrationHelper.ApplyUserMigration(app.Services);
+    MigrationHelper.ApplyThemeMigration(app.Services);
 
     app.Run();
 }

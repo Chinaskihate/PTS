@@ -25,15 +25,14 @@ public class AuthService(
 
     public async Task<bool> AssignRole(string email, string roleName)
     {
-        using var context = _dbFactory.CreateDbContext();
-        var user = context.ApplicationUsers.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+        var user = await _userManager.FindByEmailAsync(email);
         if (user != null)
         {
-            if (!(await _roleManager.RoleExistsAsync(roleName)))
+            if (!(await _roleManager.RoleExistsAsync(roleName)) && UserRoles.AllRoles.Contains(roleName))
             {
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
             }
-
+            
             await _userManager.AddToRoleAsync(user, roleName);
             return true;
         }
@@ -51,7 +50,7 @@ public class AuthService(
         using var context = _dbFactory.CreateDbContext();
         var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
         bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-        context.Entry(user).Reload();
+        //context.Entry(user).Reload();
         if (user == null || !isValid || user.IsBanned)
         {
             return new LoginResponseDto()

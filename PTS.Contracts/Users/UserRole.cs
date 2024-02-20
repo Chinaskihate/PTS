@@ -8,4 +8,17 @@ public static class UserRoles
     public const string Admin = "ADMIN";
     public const string RootAdmin = "ROOT_ADMIN";
     public const string AnyAdmin = Admin + "," + RootAdmin;
+    public const string ThemeManagerRoles = ThemeManager + "," + Admin + "," + RootAdmin;
+
+    public static string[] AllRoles => new[]
+    {
+        Student,
+        ThemeManager,
+        TaskManager,
+        TestManager,
+        Admin,
+        RootAdmin,
+        AnyAdmin,
+        ThemeManagerRoles,
+    };
 }

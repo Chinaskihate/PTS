@@ -5,6 +5,7 @@ using PTS.AuthAPI.Service.IService;
 using PTS.Backend.Extensions;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
+using PTS.Contracts.Users;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Helpers;
 using PTS.Persistence.Models.Users;
@@ -56,6 +57,31 @@ try
     app.MapControllers();
 
     MigrationHelper.ApplyUserMigration(app.Services);
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var adminEmail = "admin@gmail.com";
+        if ((await userManager.FindByNameAsync(adminEmail)) == null)
+        {
+            var admin = new ApplicationUser()
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                NormalizedEmail = adminEmail.ToUpper(),
+            };
+            await userManager.CreateAsync(admin, "admiN123!");
+
+            var roleName = UserRoles.RootAdmin;
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            if (!(await roleManager.RoleExistsAsync(roleName)))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+
+            await userManager.AddToRoleAsync(admin, roleName);
+        }
+    }
 
     app.Run();
 }
