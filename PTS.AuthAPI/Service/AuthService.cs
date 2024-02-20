@@ -76,7 +76,8 @@ public class AuthService(
         LoginResponseDto loginResponseDto = new()
         {
             User = userDto,
-            Token = token
+            Token = token,
+            Roles = roles?.ToArray() ?? new string[0],
         };
 
         return loginResponseDto;
