@@ -1,72 +1,47 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using PTS.Backend.Service.IService;
 using PTS.Contracts.Common;
+using PTS.Contracts.Theme.Dto;
 using PTS.Contracts.Users;
-using PTS.Persistence.DbContexts;
 
 namespace PTS.ThemeAPI.Controllers;
 [ApiController]
 [Route("api/theme")]
 [Authorize]
-public class ThemeController(IDbContextFactory<ThemeDbContext> _dbFactory) : ControllerBase
+public class ThemeController(IThemeService themeService) : ControllerBase
 {
-    private readonly IDbContextFactory<ThemeDbContext> _dbFactory = _dbFactory;
     private ResponseDto _response = new();
+    private readonly IThemeService _themeService = themeService;
 
     [HttpPost]
     [Authorize(Roles = UserRoles.ThemeManagerRoles)]
-    public long Create([FromBody] CreateOrUpdateThemeRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateThemeRequest request)
     {
-        return 0;
+        _response.Result = await _themeService.CreateThemeAsync(request);
+        return Ok(_response);
     }
 
-    [HttpGet("{id}")]
-    public GetThemeRequest Get(long id)
+    [HttpGet("available")]
+    public async Task<IActionResult> GetAvailableThemes()
     {
-        return null;
+        _response.Result = await _themeService.GetThemes(true);
+        return Ok(_response);
     }
 
     [HttpGet]
     [Authorize(Roles = UserRoles.ThemeManagerRoles)]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        using var context = _dbFactory.CreateDbContext();
-        _response.Result = context.Themes.FirstOrDefault(t => t.Id == 1);
+        _response.Result = await _themeService.GetThemes();
         return Ok(_response);
     }
 
     [HttpPost("{id:int}")]
     [Authorize(Roles = UserRoles.ThemeManagerRoles)]
-    public GetThemeRequest Edit(int id, [FromBody] ChangeThemeRequest model)
+    public async Task<IActionResult> Edit(int id, [FromBody] EditThemeRequest model)
     {
-        return null;
+        _response.Result = await _themeService.EditThemeAsync(id, model);
+        return Ok(_response);
     }
-}
-
-public class CreateOrUpdateThemeRequest
-{
-    public string Name { get; set; }
-
-    public long RootId { get; set; }
-}
-
-public class ChangeThemeRequest
-{
-    public string Name { get; set; }
-
-    public bool IsBanned { get; set; }
-}
-
-public class GetThemeRequest
-{
-    public long Id { get; set; }
-
-    public string Name { get; set; }
-
-    public long RootId { get; set; }
-
-    public long[] ChildIds { get; set; }
-
-    public bool IsBanned { get; set; }
 }

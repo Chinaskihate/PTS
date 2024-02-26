@@ -1,7 +1,6 @@
 ﻿namespace PTS.Contracts.Users;
 public static class UserRoles
 {
-    public const string Student = "STUDENT";
     public const string ThemeManager = "THEME_MANAGER";
     public const string TaskManager = "TASK_MANAGER";
     public const string TestManager = "TEST_MANAGER";
@@ -12,7 +11,6 @@ public static class UserRoles
 
     public static string[] AllRoles => new[]
     {
-        Student,
         ThemeManager,
         TaskManager,
         TestManager,

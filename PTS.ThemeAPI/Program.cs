@@ -25,6 +25,7 @@ try
 
     // Add services to the container.
     builder.Services.AddThemeDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
+    builder.Services.AddThemeMapper();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
@@ -34,6 +35,7 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<IThemeService, ThemeService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);

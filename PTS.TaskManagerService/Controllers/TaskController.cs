@@ -58,7 +58,7 @@ public class CreateTaskRequest
 {
     public long[] ThemeIds { get; set; }
 
-    public string Description { get; set; }
+    public ProgrammingLanguage ProgrammingLanguage { get; set; }
 
     public bool IsEnabled { get; set; }
 
@@ -69,11 +69,7 @@ public class ChangeTaskRequest
 {
     public long[] ThemeIds { get; set; }
 
-    public string Description { get; set; }
-
     public bool IsEnabled { get; set; }
-
-    public TaskType Type { get; set; }
 }
 
 public class ChangeVersionRequest
@@ -91,9 +87,24 @@ public class CreateVersionRequest
 
     public ProgrammingLanguage ProgrammingLanguage { get; set; }
 
-    public string SpecificDescription { get; set; }
+    public string Description { get; set; }
+}
 
-    public bool UseSubstitutions { get; set; }
+public class EditVersionRequest
+{
+    public string Description { get; set; }
+}
+
+public class CreateTestCase
+{
+    public string? Input { get; set; }
+    public string Output { get; set; }
+}
+
+public class EditTestCase
+{
+    public string? Input { get; set; }
+    public string Output { get; set; }
 }
 
 public class GetVersionResponse
@@ -104,6 +115,7 @@ public class GetVersionResponse
 
     public ProgrammingLanguage ProgrammingLanguage { get; set; }
 
+    // todo:
     public long CreatedBy { get; set; }
 
     public long LastEditedBy { get; set; }
@@ -124,11 +136,20 @@ public class GetTaskResponse
 
     public long[] ThemeIds { get; set; }
 
-    public string Description { get; set; }
-
     public bool IsEnabled { get; set; }
 
     public TaskType Type { get; set; }
 
-    public long[] VersionIds { get; set; }
+    public VersionDto[] Versions { get; set; }
+}
+
+public class VersionDto
+{
+    public long Id { get; set; }
+
+    public long TaskId { get; set; }
+
+    public ProgrammingLanguage ProgrammingLanguage { get; set; }
+
+    public string Description { get; set; }
 }

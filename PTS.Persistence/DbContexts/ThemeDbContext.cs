@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PTS.Contracts.Constants;
 using PTS.Persistence.Models.Themes;
 
 namespace PTS.Persistence.DbContexts;
@@ -22,7 +23,7 @@ public class ThemeDbContext : DbContext
 
         modelBuilder.Entity<Theme>().HasData(new Theme
         {
-            Id = 1,
+            Id = Constants.GlobalRootThemeId,
             Name = "RootTheme",
             IsBanned = false
         });
