@@ -30,6 +30,7 @@ try
 
     // Add services to the container.
 
+    builder.AddCors();
     builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<UserDbContext>()
@@ -46,6 +47,7 @@ try
 
     var app = builder.Build();
 
+    app.UseCors(CorsExtensions.AllowAllPolicy);
     app.UseSwagger();
     app.UseSwaggerUI();
 
