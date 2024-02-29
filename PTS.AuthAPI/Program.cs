@@ -30,7 +30,15 @@ try
 
     // Add services to the container.
 
-    builder.AddCors();
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+    });
     builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<UserDbContext>()
@@ -47,7 +55,8 @@ try
 
     var app = builder.Build();
 
-    app.UseCors(CorsExtensions.AllowAllPolicy);
+    //app.UseCors(CorsExtensions.AllowAllPolicy);
+    app.UseCors();
     app.UseSwagger();
     app.UseSwaggerUI();
 
