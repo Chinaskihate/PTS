@@ -14,20 +14,20 @@ public static class MigrationHelper
         });
     }
 
-    public static IServiceCollection AddThemeDbContextFactory(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddTaskDbContextFactory(this IServiceCollection services, string connectionString)
     {
-        return services.AddDbContextFactory<ThemeDbContext>(options =>
+        return services.AddDbContextFactory<TaskDbContext>(options =>
         {
             options.EnableSensitiveDataLogging();
             options.UseNpgsql(connectionString);
         });
     }
 
-    public static void ApplyThemeMigration(IServiceProvider services)
+    public static void ApplyTaskMigration(IServiceProvider services)
     {
         using var scope = services.CreateScope();
         using var db = scope.ServiceProvider
-            .GetRequiredService<IDbContextFactory<ThemeDbContext>>()
+            .GetRequiredService<IDbContextFactory<TaskDbContext>>()
             .CreateDbContext();
         if (db.Database.GetPendingMigrations().Count() > 0)
         {

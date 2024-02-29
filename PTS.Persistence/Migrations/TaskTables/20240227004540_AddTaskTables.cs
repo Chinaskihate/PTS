@@ -3,10 +3,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace PTS.Persistence.Migrations.ThemeTable
+namespace PTS.Persistence.Migrations.TaskTables
 {
     /// <inheritdoc />
-    public partial class AddThemeTable : Migration
+    public partial class AddTaskTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

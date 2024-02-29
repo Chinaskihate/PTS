@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PTS.Persistence.DbContexts;
 
 #nullable disable
 
-namespace PTS.Persistence.Migrations.ThemeTable
+namespace PTS.Persistence.Migrations.TaskTables
 {
-    [DbContext(typeof(ThemeDbContext))]
-    partial class ThemeDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(TaskDbContext))]
+    [Migration("20240227004540_AddTaskTables")]
+    partial class AddTaskTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

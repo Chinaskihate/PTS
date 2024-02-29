@@ -8,10 +8,10 @@ using PTS.Persistence.Models.Themes;
 
 namespace PTS.Backend.Service;
 public class ThemeService(
-    IDbContextFactory<ThemeDbContext> dbFactory,
+    IDbContextFactory<TaskDbContext> dbFactory,
     IMapper mapper) : IThemeService
 {
-    private readonly IDbContextFactory<ThemeDbContext> _dbFactory = dbFactory;
+    private readonly IDbContextFactory<TaskDbContext> _dbFactory = dbFactory;
     private readonly IMapper _mapper = mapper;
 
     public async Task<long> CreateThemeAsync(CreateThemeRequest request)
@@ -47,7 +47,7 @@ public class ThemeService(
         return await GetThemes(availableOnly, context);
     }
 
-    private async Task<ThemeDto> GetThemes(bool availableOnly, ThemeDbContext context)
+    private async Task<ThemeDto> GetThemes(bool availableOnly, TaskDbContext context)
     {
         Theme root = await context.Themes
             .FirstAsync(t => t.Id == Constants.GlobalRootThemeId);
@@ -55,7 +55,7 @@ public class ThemeService(
         return uploadedRoot;
     }
 
-    private async Task<ThemeDto> GetThemeWithAllChildren(Theme currentNode, bool availableOnly, ThemeDbContext context)
+    private async Task<ThemeDto> GetThemeWithAllChildren(Theme currentNode, bool availableOnly, TaskDbContext context)
     {
         var uploadedNode = await context.Themes
             .Include(t => t.Children)

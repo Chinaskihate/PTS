@@ -1,4 +1,4 @@
-namespace PTS.TaskManagerService;
+namespace PTS.TaskAPI;
 
 public class WeatherForecast
 {

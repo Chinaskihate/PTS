@@ -1,6 +1,0 @@
-@PTS.TaskManagerService_HostAddress = http://localhost:5279
-
-GET {{PTS.TaskManagerService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

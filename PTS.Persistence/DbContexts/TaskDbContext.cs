@@ -3,19 +3,20 @@ using PTS.Contracts.Constants;
 using PTS.Persistence.Models.Themes;
 
 namespace PTS.Persistence.DbContexts;
-public class ThemeDbContext : DbContext
+public class TaskDbContext : DbContext
 {
-    public ThemeDbContext() : base()
+    public TaskDbContext() : base()
     {
         
     }
 
-    public ThemeDbContext(DbContextOptions<ThemeDbContext> options) : base(options)
+    public TaskDbContext(DbContextOptions<TaskDbContext> options) : base(options)
     {
 
     }
 
     public DbSet<Theme> Themes { get; set; }
+    public DbSet<Task> Tasks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

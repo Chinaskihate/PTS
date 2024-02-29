@@ -1,11 +1,11 @@
+using PTS.Backend.Extensions;
+using PTS.Backend.Mappings;
+using PTS.Backend.Middlewares;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
 using PTS.Backend.Utils;
-using PTS.Backend.Extensions;
-using Serilog;
-using PTS.Backend.Middlewares;
 using PTS.Persistence.Helpers;
-using PTS.Backend.Mappings;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -26,7 +26,7 @@ try
 
     // Add services to the container.
     builder.Services.AddTaskDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
-    builder.Services.AddThemeMapper();
+    builder.Services.AddTaskMapper();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
@@ -36,7 +36,6 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
-    builder.Services.AddScoped<IThemeService, ThemeService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
@@ -55,6 +54,8 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    MigrationHelper.ApplyTaskMigration(app.Services);
 
     app.Run();
 }
