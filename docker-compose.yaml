@@ -1,0 +1,101 @@
+networks:
+  pts-dev:
+    driver: bridge
+services:
+  db:
+    container_name: pts-db
+    environment:
+      - POSTGRES_PASSWORD=password
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - pts-dev
+  pg-admin:
+    container_name: pts-pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    depends_on:
+      - db
+    volumes:
+      - pg-admin:/var/lib/pgadmin4/data
+    ports:
+      - "5050:80"
+    networks:
+      - pts-dev
+  auth-api:
+    container_name: pts-auth-api
+    build:
+      context: .
+      dockerfile: PTS.AuthAPI/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+:7002
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    ports:
+      - "7002:7002"
+    depends_on:
+      - db
+    volumes:
+      - ./localhost.pfx:/https/localhost.pfx:ro
+      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+    restart: always
+  admin-api:
+    container_name: pts-admin-api
+    build:
+      context: .
+      dockerfile: PTS.AdminAPI/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+:7003
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    ports:
+      - "7003:7003"
+    depends_on:
+      - db
+    volumes:
+      - ./localhost.pfx:/https/localhost.pfx:ro
+      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+    restart: always
+  theme-api:
+    container_name: pts-theme-api
+    build:
+      context: .
+      dockerfile: PTS.ThemeAPI/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+:7004
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    ports:
+      - "7004:7004"
+    depends_on:
+      - db
+    volumes:
+      - ./localhost.pfx:/https/localhost.pfx:ro
+      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+    restart: always
+  task-api:
+    container_name: pts-task-api
+    build:
+      context: .
+      dockerfile: PTS.TaskAPI/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+:7005
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    ports:
+      - "7005:7005"
+    depends_on:
+      - db
+    volumes:
+      - ./localhost.pfx:/https/localhost.pfx:ro
+      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+    restart: always
+volumes:
+  db:
+  pg-admin:
