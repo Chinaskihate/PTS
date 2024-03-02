@@ -17,4 +17,8 @@
     <ProjectReference Include="..\PTS.Contracts\PTS.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\IdentityTables\" />
+  </ItemGroup>
+
 </Project>

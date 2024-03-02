@@ -22,6 +22,32 @@ namespace PTS.Persistence.Migrations.TaskTables
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("PTS.Persistence.Models.Tasks.Task", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AvgTimeInMin")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Complexity")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tasks");
+                });
+
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>
                 {
                     b.Property<int>("Id")

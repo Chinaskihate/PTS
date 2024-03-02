@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PTS.AuthAPI.Models.Dto;
 using PTS.AuthAPI.Service.IService;
-using PTS.Contracts.Auth;
+using PTS.Contracts.Auth.Dto;
 using PTS.Contracts.Users;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Users;
@@ -23,11 +22,12 @@ public class AuthService(
     private readonly IJwtTokenGenerator _tokenGenerator = tokenGenerator;
     private readonly ITokenStorer _tokenStorer = tokenStorer;
 
-    public async Task<bool> AssignRole(string email, string roleName)
+    public async Task<bool> AssignRole(AssignRoleRequestDto dto)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user != null)
         {
+            var roleName = dto.Role.ToUpper();
             if (!(await _roleManager.RoleExistsAsync(roleName)) && UserRoles.AllRoles.Contains(roleName))
             {
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
@@ -69,8 +69,9 @@ public class AuthService(
             Email = user.Email,
             Id = user.Id,
             TelegramId = user.TelegramId,
-            PhoneNumber = user.PhoneNumber,
             IsBanned = user.IsBanned,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
         };
 
         LoginResponseDto loginResponseDto = new()
@@ -90,8 +91,7 @@ public class AuthService(
             UserName = registrationRequestDto.Email,
             Email = registrationRequestDto.Email,
             TelegramId = registrationRequestDto.TelegramId,
-            NormalizedEmail = registrationRequestDto.Email.ToUpper(),
-            PhoneNumber = registrationRequestDto.PhoneNumber
+            NormalizedEmail = registrationRequestDto.Email.ToUpper()
         };
 
         try
@@ -107,8 +107,9 @@ public class AuthService(
                     Email = userToReturn.Email,
                     Id = userToReturn.Id,
                     TelegramId = userToReturn.TelegramId,
-                    PhoneNumber = userToReturn.PhoneNumber,
                     IsBanned = userToReturn.IsBanned,
+                    FirstName = userToReturn.FirstName,
+                    LastName = userToReturn.LastName,
                 };
 
                 return string.Empty;
@@ -126,10 +127,10 @@ public class AuthService(
         }
     }
 
-    public async Task<bool> RevokeToken(LoginRequestDto loginRequestDto)
+    public async Task<bool> RevokeToken(RevokeTokenDto dto)
     {
         using var context = _dbFactory.CreateDbContext();
-        var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+        var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == dto.UserName.ToLower());
         return user == null ? false : _tokenStorer.RemoveToken(user);
     }
 }

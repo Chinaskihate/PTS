@@ -1,6 +1,6 @@
 ﻿using PTS.Contracts.Users;
 
-namespace PTS.AuthAPI.Models.Dto;
+namespace PTS.Contracts.Auth.Dto;
 
 public class LoginResponseDto
 {

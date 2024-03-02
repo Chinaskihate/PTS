@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Service.IService;
-using PTS.Contracts.Auth;
+using PTS.Contracts.Auth.Dto;
 using PTS.Contracts.Common;
 using PTS.Contracts.Users;
 using PTS.Persistence.DbContexts;

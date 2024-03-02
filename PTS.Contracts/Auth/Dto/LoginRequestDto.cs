@@ -1,4 +1,4 @@
-﻿namespace PTS.Contracts.Auth;
+﻿namespace PTS.Contracts.Auth.Dto;
 public class LoginRequestDto
 {
     public string UserName { get; set; }

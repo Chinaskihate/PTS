@@ -12,6 +12,22 @@ namespace PTS.Persistence.Migrations.TaskTables
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Tasks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Complexity = table.Column<int>(type: "integer", nullable: false),
+                    AvgTimeInMin = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tasks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Themes",
                 columns: table => new
                 {
@@ -45,6 +61,9 @@ namespace PTS.Persistence.Migrations.TaskTables
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Tasks");
+
             migrationBuilder.DropTable(
                 name: "Themes");
         }

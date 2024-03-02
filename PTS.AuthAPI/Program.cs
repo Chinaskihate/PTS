@@ -80,6 +80,8 @@ try
                 UserName = adminEmail,
                 Email = adminEmail,
                 NormalizedEmail = adminEmail.ToUpper(),
+                FirstName = "Admin",
+                LastName = "Admin"
             };
             await userManager.CreateAsync(admin, "admiN123!");
 

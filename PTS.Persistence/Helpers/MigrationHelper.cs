@@ -29,7 +29,7 @@ public static class MigrationHelper
         using var db = scope.ServiceProvider
             .GetRequiredService<IDbContextFactory<TaskDbContext>>()
             .CreateDbContext();
-        if (db.Database.GetPendingMigrations().Count() > 0)
+        if (db.Database.GetPendingMigrations().Any())
         {
             db.Database.Migrate();
         }
@@ -41,7 +41,7 @@ public static class MigrationHelper
         using var db = scope.ServiceProvider
             .GetRequiredService<IDbContextFactory<UserDbContext>>()
             .CreateDbContext();
-        if (db.Database.GetPendingMigrations().Count() > 0)
+        if (db.Database.GetPendingMigrations().Any())
         {
             db.Database.Migrate();
         }

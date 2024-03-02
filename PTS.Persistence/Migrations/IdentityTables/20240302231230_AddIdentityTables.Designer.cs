@@ -12,7 +12,7 @@ using PTS.Persistence.DbContexts;
 namespace PTS.Persistence.Migrations.IdentityTables
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240218225459_AddIdentityTables")]
+    [Migration("20240302231230_AddIdentityTables")]
     partial class AddIdentityTables
     {
         /// <inheritdoc />
@@ -176,8 +176,14 @@ namespace PTS.Persistence.Migrations.IdentityTables
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsBanned")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
