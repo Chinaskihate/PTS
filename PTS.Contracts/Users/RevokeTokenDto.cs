@@ -4,5 +4,5 @@ namespace PTS.Contracts.Users;
 public class RevokeTokenDto
 {
     [Required]
-    public string UserName{ get; set; }
+    public string? UserName { get; set; }
 }
