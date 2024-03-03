@@ -73,26 +73,36 @@ try
     {
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var adminEmail = "admin@gmail.com";
-        if ((await userManager.FindByNameAsync(adminEmail)) == null)
+
+
+        await CreateUserAsync("root@gmail.com", "rooT12345!", "RootAdmin", UserRoles.RootAdmin);
+        await CreateUserAsync("admin@gmail.com", "admiN12345!", "Admin", UserRoles.Admin);
+        await CreateUserAsync("theme@gmail.com", "themE12345!", "Theme", UserRoles.ThemeManager);
+        await CreateUserAsync("task@gmail.com", "tasK12345!", "Task", UserRoles.TaskManager);
+        await CreateUserAsync("test@gmail.com", "tesT12345!", "Test", UserRoles.TestManager);
+
+        async Task CreateUserAsync(string email, string password, string name, string roleName)
         {
-            var admin = new ApplicationUser()
+            if ((await userManager.FindByNameAsync(email)) == null)
             {
-                UserName = adminEmail,
-                Email = adminEmail,
-                NormalizedEmail = adminEmail.ToUpper(),
-                FirstName = "Admin",
-                LastName = "Admin"
-            };
-            await userManager.CreateAsync(admin, "admiN123!");
+                var user = new ApplicationUser()
+                {
+                    UserName = email,
+                    Email = email,
+                    NormalizedEmail = email.ToUpper(),
+                    FirstName = name,
+                    LastName = name
+                };
+                await userManager.CreateAsync(user, password);
 
-            var roleName = UserRoles.RootAdmin;
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            if (!(await roleManager.RoleExistsAsync(roleName)))
-            {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                if (!(await roleManager.RoleExistsAsync(roleName)))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+
+                await userManager.AddToRoleAsync(user, roleName);
             }
-
-            await userManager.AddToRoleAsync(admin, roleName);
         }
     }
 
