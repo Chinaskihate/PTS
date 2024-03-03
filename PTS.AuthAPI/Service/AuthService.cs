@@ -91,7 +91,9 @@ public class AuthService(
             UserName = registrationRequestDto.Email,
             Email = registrationRequestDto.Email,
             TelegramId = registrationRequestDto.TelegramId,
-            NormalizedEmail = registrationRequestDto.Email.ToUpper()
+            NormalizedEmail = registrationRequestDto.Email.ToUpper(),
+            FirstName = registrationRequestDto.FirstName,
+            LastName = registrationRequestDto.LastName,
         };
 
         try

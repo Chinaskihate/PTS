@@ -47,10 +47,39 @@ namespace PTS.Persistence.Migrations.TaskTables
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TaskTheme",
+                columns: table => new
+                {
+                    TasksId = table.Column<int>(type: "integer", nullable: false),
+                    ThemesId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskTheme", x => new { x.TasksId, x.ThemesId });
+                    table.ForeignKey(
+                        name: "FK_TaskTheme_Tasks_TasksId",
+                        column: x => x.TasksId,
+                        principalTable: "Tasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskTheme_Themes_ThemesId",
+                        column: x => x.ThemesId,
+                        principalTable: "Themes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Themes",
                 columns: new[] { "Id", "IsBanned", "Name", "ParentId" },
                 values: new object[] { 1, false, "RootTheme", null });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskTheme_ThemesId",
+                table: "TaskTheme",
+                column: "ThemesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Themes_ParentId",
@@ -61,6 +90,9 @@ namespace PTS.Persistence.Migrations.TaskTables
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TaskTheme");
+
             migrationBuilder.DropTable(
                 name: "Tasks");
 

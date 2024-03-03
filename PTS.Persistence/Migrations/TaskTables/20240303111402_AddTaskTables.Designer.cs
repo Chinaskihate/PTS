@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PTS.Persistence.DbContexts;
@@ -11,9 +12,11 @@ using PTS.Persistence.DbContexts;
 namespace PTS.Persistence.Migrations.TaskTables
 {
     [DbContext(typeof(TaskDbContext))]
-    partial class TaskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240303111402_AddTaskTables")]
+    partial class AddTaskTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,37 +84,6 @@ namespace PTS.Persistence.Migrations.TaskTables
                         });
                 });
 
-            modelBuilder.Entity("PTS.Persistence.Models.Versions.TaskVersion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("InputCondition")
-                        .HasColumnType("text");
-
-                    b.Property<string>("OutputCondition")
-                        .HasColumnType("text");
-
-                    b.Property<int>("ProgrammingLanguage")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("TaskVersions");
-                });
-
             modelBuilder.Entity("TaskTheme", b =>
                 {
                     b.Property<int>("TasksId")
@@ -136,17 +108,6 @@ namespace PTS.Persistence.Migrations.TaskTables
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("PTS.Persistence.Models.Versions.TaskVersion", b =>
-                {
-                    b.HasOne("PTS.Persistence.Models.Tasks.Task", "Task")
-                        .WithMany("Versions")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-                });
-
             modelBuilder.Entity("TaskTheme", b =>
                 {
                     b.HasOne("PTS.Persistence.Models.Tasks.Task", null)
@@ -160,11 +121,6 @@ namespace PTS.Persistence.Migrations.TaskTables
                         .HasForeignKey("ThemesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("PTS.Persistence.Models.Tasks.Task", b =>
-                {
-                    b.Navigation("Versions");
                 });
 
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>

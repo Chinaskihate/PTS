@@ -1,8 +1,14 @@
-﻿namespace PTS.Contracts.Auth.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PTS.Contracts.Auth.Dto;
 
 public class RegistrationRequestDto
 {
-    public string Email { get; set; }
-    public string TelegramId { get; set; }
-    public string Password { get; set; }
+    [Required]
+    public string Email { get; set; } = string.Empty;
+    public string? TelegramId { get; set; } = string.Empty;
+    [Required]
+    public string Password { get; set; } = string.Empty;
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
 }
