@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Identity;
 using PTS.Backend.Extensions;
 using PTS.Backend.Mappings;
 using PTS.Backend.Middlewares;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
 using PTS.Backend.Utils;
+using PTS.Persistence.DbContexts;
 using PTS.Persistence.Helpers;
+using PTS.Persistence.Models.Users;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -27,6 +30,9 @@ try
     // Add services to the container.
     builder.AddCors();
     builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
+    builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        .AddEntityFrameworkStores<UserDbContext>()
+        .AddDefaultTokenProviders();
     builder.Services.AddUserMapper();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddControllers();
