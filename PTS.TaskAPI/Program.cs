@@ -38,6 +38,7 @@ try
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<ITaskService, TaskService>();
+    builder.Services.AddScoped<ITaskVersionService, TaskVersionService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
