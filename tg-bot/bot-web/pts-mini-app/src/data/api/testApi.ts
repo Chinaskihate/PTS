@@ -39,12 +39,11 @@ const tests: Test[] = [
                 useSubstitutions: true,
                 time: 45,
                 difficult: Difficult.Normal,
-                type: TaskType.Code,
+                type: TaskType.OneAnswer,
                 language: Language.Java,
                 themes: ["cat3", "cat4"],
                 testCases: [
-                    { id: 2, input: "2 2 +", output: "4", visible: true },
-                    { id: 3, input: "10 5 -", output: "5", visible: false }
+                    { id: 2, input: `{"answers": ["2", "3", "4", "5"]}`, output: "4", visible: true },
                 ]
             },
             {
@@ -55,11 +54,11 @@ const tests: Test[] = [
                 useSubstitutions: false,
                 time: 35,
                 difficult: Difficult.Normal,
-                type: TaskType.Code,
+                type: TaskType.MultipleAnswer,
                 language: Language.Python,
                 themes: ["cat5", "cat6"],
                 testCases: [
-                    { id: 4, input: "hello, world", output: "dlrow ,olleh", visible: true }
+                    { id: 2, input: `{"answers": ["2", "3", "4", "5"]}`, output: "4", visible: true },
                 ]
             },
             {

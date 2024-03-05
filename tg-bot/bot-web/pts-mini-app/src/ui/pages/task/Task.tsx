@@ -9,14 +9,20 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    Box, Button,
+    Box,
+    Button,
+    Checkbox,
     Chip,
     CircularProgress,
     Container,
     CssBaseline,
     Divider,
+    FormControlLabel,
+    FormGroup,
     Grid,
     IconButton,
+    Radio,
+    RadioGroup,
     Stack,
     TextField,
     Typography
@@ -30,7 +36,6 @@ import {Progress, TaskResult} from "../../../data/models/TestResult";
 import {getHistory} from "../../../domain/historyHandler";
 import {useInitData} from "@tma.js/sdk-react";
 import {getProgressColor} from "../../utils/colorsPicker";
-import {signUp} from "../../../domain/authHandler";
 
 function getLanguageExtensions(lang: Language) {
     switch (lang) {
@@ -236,6 +241,41 @@ const TaskPage = observer(() => {
                                     onChange={(value) => setTaskInput(value)}
                                 />
                             )}
+                            {task.type === TaskType.OneAnswer && task.testCases.length === 1 && (
+                                <RadioGroup
+                                    value={taskInput}
+                                    onChange={(_, value) => setTaskInput(value)}>
+                                    {
+                                        (JSON.parse(task.testCases[0].input) as { answers: string[] }).answers.map(it =>
+                                            <FormControlLabel value={it} control={<Radio/>} label={it}/>)
+                                    }
+                                </RadioGroup>
+                            )}
+                            {task.type === TaskType.MultipleAnswer && task.testCases.length === 1 && (
+                                <FormGroup>
+                                    {
+                                        (JSON.parse(task.testCases[0].input) as { answers: string[] }).answers.map(it =>
+                                            <FormControlLabel label={it} control={<Checkbox defaultChecked={false}/>}
+                                                              onChange={(_, value) => {
+                                                                  try {
+                                                                      const json = JSON.parse(taskInput) as {
+                                                                          answers: string[]
+                                                                      }
+                                                                      if (value) {
+                                                                          json.answers = Array.from(new Set([...json.answers, it]))
+                                                                      } else {
+                                                                          json.answers = json.answers.filter(x => x !== it)
+                                                                      }
+                                                                      setTaskInput(JSON.stringify(json))
+                                                                  } catch (e) {
+                                                                      setTaskInput(JSON.stringify({answers: [it]}))
+                                                                  }
+
+                                                              }}/>)
+                                    }
+                                </FormGroup>
+                            )}
+
 
                             <Button
                                 fullWidth
@@ -274,7 +314,7 @@ const TaskPage = observer(() => {
                                         </Stack>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        {task.type === TaskType.Text && (
+                                        {task.type !== TaskType.Code && (
                                             <Typography sx={{fontWeight: "bold", mb: 2}} align={"left"}
                                                         variant={"h6"}>{it.input}</Typography>
                                         )}

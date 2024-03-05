@@ -12,13 +12,13 @@ const history: TestResult[] = [
             },
             {
                 taskId: 2,
-                input: "hello world!",
+                input: "3",
                 isCorrect: true,
                 submissionAt: new Date()
             },
             {
                 taskId: 3,
-                input: "hello world!",
+                input: "1\n2",
                 isCorrect: false,
                 submissionAt: new Date()
             },

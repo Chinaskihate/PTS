@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import './App.css';
-import {BrowserRouter, useNavigate} from "react-router-dom";
+import {BrowserRouter} from "react-router-dom";
 import AppRouter from "./navigation/AppRouter";
 import {auth} from "../domain/authHandler";
 import {AppContext} from "./providers/AppProvider";
@@ -8,7 +8,6 @@ import {useInitData, useMainButton, useMiniApp, useViewport} from "@tma.js/sdk-r
 import {CircularProgress, createTheme, ThemeProvider} from "@mui/material";
 
 import BottomMenu from "./pages/bottomMenu/BottomMenu";
-import {AUTH_ROUTE} from "./navigation/navigationConstants";
 
 
 const defaultTheme = createTheme({

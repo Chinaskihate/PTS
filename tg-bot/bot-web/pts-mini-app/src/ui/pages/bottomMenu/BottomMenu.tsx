@@ -12,18 +12,17 @@ import {
 import HomeIcon from "@mui/icons-material/Home";
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PersonIcon from "@mui/icons-material/Person";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {useInitData} from "@tma.js/sdk-react";
 import {deepOrange} from "@mui/material/colors";
 import {AppContext} from "../../providers/AppProvider";
-import {cookie} from "../../../data/store";
 import {useNavigate} from "react-router-dom";
 import {MAIN_ROUTE, HISTORY_ROUTE} from "../../navigation/navigationConstants";
 
 
 const BottomMenu = observer(() => {
     const [profileState, setProfileState] = useState(false);
-    const {setIsAuth, screen, setScreen} = useContext(AppContext)
+    const {setIsAuth, user, screen, setScreen} = useContext(AppContext)
     const navigate = useNavigate()
     const telegramData = useInitData()
 
@@ -86,7 +85,7 @@ const BottomMenu = observer(() => {
                         </Typography>
 
                         <Typography variant={"h6"}>
-                            {cookie.get("email")}
+                            {user?.email}
                         </Typography>
 
                         <Button

@@ -1,4 +1,4 @@
-export enum TaskType {Code = "code", Text = "text"}
+export enum TaskType {Code = "code", Text = "text", OneAnswer = "one answer", MultipleAnswer = "multiple answers"}
 
 export enum Language {Java = "java", Csharp = "c#", Python = "python", Kotlin = "kotlin"}
 
