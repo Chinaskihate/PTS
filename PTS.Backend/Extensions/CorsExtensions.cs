@@ -4,18 +4,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PTS.Backend.Extensions;
 public static class CorsExtensions
 {
-    public const string AllowAllPolicy = "AllowAll";
-
     public static WebApplicationBuilder AddCors(
         this WebApplicationBuilder builder)
     {
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy(AllowAllPolicy, policy =>
+            options.AddDefaultPolicy(builder =>
             {
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
-                policy.AllowAnyOrigin();
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
             });
         });
         return builder;

@@ -30,15 +30,7 @@ try
 
     // Add services to the container.
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
-    });
+    builder.AddCors();
     builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<UserDbContext>()
@@ -55,7 +47,6 @@ try
 
     var app = builder.Build();
 
-    //app.UseCors(CorsExtensions.AllowAllPolicy);
     app.UseCors();
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -72,8 +63,6 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var adminEmail = "admin@gmail.com";
-
 
         await CreateUserAsync("root@gmail.com", "rooT12345!", "RootAdmin", UserRoles.RootAdmin);
         await CreateUserAsync("admin@gmail.com", "admiN12345!", "Admin", UserRoles.Admin);
