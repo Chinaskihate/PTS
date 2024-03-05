@@ -21,4 +21,12 @@ public class TaskController(ITaskService taskService) : ControllerBase
         _response.Result = await _taskService.CreateAsync(dto);
         return Ok(_response);
     }
+
+    [HttpPost("{id:int}")]
+    [Authorize(Roles = UserRoles.TaskManagerRoles)]
+    public async Task<IActionResult> Edit(int id, [FromBody] EditTaskRequest dto)
+    {
+        _response.Result = await _taskService.EditAsync(id, dto);
+        return Ok(_response);
+    }
 }

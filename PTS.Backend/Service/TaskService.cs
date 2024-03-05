@@ -47,4 +47,24 @@ public class TaskService(
         var result = _mapper.Map<TaskDto>(createdTask);
         return result;
     }
+
+    public async Task<TaskDto> EditAsync(int id, EditTaskRequest dto)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var themes = await context.Themes
+            .Where(th => dto.ThemeIds.Contains(th.Id))
+            .ToListAsync();
+
+        var task = await context.Tasks
+            .Include(t => t.Versions)
+            .FirstAsync(t => t.Id == id);
+
+        task.Themes = themes;
+        task.IsEnabled = dto.IsEnabled;
+
+        await context.SaveChangesAsync();
+
+        var result = _mapper.Map<TaskDto>(task);
+        return result;
+    }
 }
