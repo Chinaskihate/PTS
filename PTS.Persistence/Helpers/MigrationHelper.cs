@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PTS.Persistence.DbContexts;
+using Serilog;
 
 namespace PTS.Persistence.Helpers;
 public static class MigrationHelper
@@ -10,7 +11,8 @@ public static class MigrationHelper
         return services.AddDbContextFactory<UserDbContext>(options =>
         {
             options.EnableSensitiveDataLogging();
-            options.UseNpgsql(connectionString);
+            options.UseNpgsql(connectionString)
+                .LogTo(Log.Logger.Information, Microsoft.Extensions.Logging.LogLevel.Information, null);
         });
     }
 
@@ -19,7 +21,8 @@ public static class MigrationHelper
         return services.AddDbContextFactory<TaskDbContext>(options =>
         {
             options.EnableSensitiveDataLogging();
-            options.UseNpgsql(connectionString);
+            options.UseNpgsql(connectionString)
+                .LogTo(Log.Logger.Information, Microsoft.Extensions.Logging.LogLevel.Information, null);
         });
     }
 
@@ -29,7 +32,7 @@ public static class MigrationHelper
         using var db = scope.ServiceProvider
             .GetRequiredService<IDbContextFactory<TaskDbContext>>()
             .CreateDbContext();
-        if (db.Database.GetPendingMigrations().Count() > 0)
+        if (db.Database.GetPendingMigrations().Any())
         {
             db.Database.Migrate();
         }
@@ -41,7 +44,7 @@ public static class MigrationHelper
         using var db = scope.ServiceProvider
             .GetRequiredService<IDbContextFactory<UserDbContext>>()
             .CreateDbContext();
-        if (db.Database.GetPendingMigrations().Count() > 0)
+        if (db.Database.GetPendingMigrations().Any())
         {
             db.Database.Migrate();
         }

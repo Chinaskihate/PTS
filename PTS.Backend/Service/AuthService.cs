@@ -1,6 +1,6 @@
 ﻿using PTS.Backend.Service.IService;
 using PTS.Backend.Utils;
-using PTS.Contracts.Auth;
+using PTS.Contracts.Auth.Dto;
 using PTS.Contracts.Common;
 
 namespace PTS.Backend.Service;

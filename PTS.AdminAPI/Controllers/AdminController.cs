@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Service.IService;
-using PTS.Contracts.Auth;
+using PTS.Contracts.Auth.Dto;
 using PTS.Contracts.Common;
 using PTS.Contracts.Users;
 using PTS.Persistence.DbContexts;
@@ -21,7 +21,7 @@ public class AdminController(IDbContextFactory<UserDbContext> dbFactory, IMapper
     private readonly IAuthService _authService = authService;
     private ResponseDto _response = new();
 
-    [HttpGet]
+    [HttpGet("Users")]
     public ResponseDto Get()
     {
         try
@@ -39,7 +39,7 @@ public class AdminController(IDbContextFactory<UserDbContext> dbFactory, IMapper
     }
 
     [HttpGet]
-    [Route("{id}")]
+    [Route("Users/{id}")]
     public ResponseDto Get(string id)
     {
         try

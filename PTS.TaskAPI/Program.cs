@@ -25,6 +25,7 @@ try
     SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
 
     // Add services to the container.
+    builder.AddCors();
     builder.Services.AddTaskDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddTaskMapper();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -36,6 +37,7 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<ITaskService, TaskService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
@@ -45,6 +47,7 @@ try
 
     var app = builder.Build();
 
+    app.UseCors();
     app.UseSwagger();
     app.UseSwaggerUI();
 

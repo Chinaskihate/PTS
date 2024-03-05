@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PTS.AuthAPI.Models.Dto;
-using PTS.AuthAPI.Service.IService;
+using PTS.Backend.Service.IService;
+using PTS.Contracts.Auth.Dto;
 using PTS.Contracts.Common;
 using PTS.Contracts.Users;
-using PTS.Backend.Service.IService;
 using IAuthService = PTS.AuthAPI.Service.IService.IAuthService;
-using PTS.Contracts.Auth;
 
 namespace PTS.AuthAPI.Controllers;
 
@@ -49,9 +47,9 @@ public class AuthController(IAuthService authService, ITokenProvider tokenProvid
 
     [HttpPost("RevokeToken")]
     [Authorize(Roles = UserRoles.AnyAdmin)]
-    public async Task<IActionResult> RevokeToken([FromBody] LoginRequestDto model)
+    public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenDto dto)
     {
-        var tokenRevoked = await _authService.RevokeToken(model);
+        var tokenRevoked = await _authService.RevokeToken(dto);
         if (!tokenRevoked)
         {
             _response.IsSuccess = false;
@@ -72,7 +70,7 @@ public class AuthController(IAuthService authService, ITokenProvider tokenProvid
 
     [HttpPost("AssignRole")]
     [Authorize(Roles = UserRoles.AnyAdmin)]
-    public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto model)
+    public async Task<IActionResult> AssignRole([FromBody] AssignRoleRequestDto model)
     {
         if(!await CheckCurrentToken())
         {
@@ -80,7 +78,7 @@ public class AuthController(IAuthService authService, ITokenProvider tokenProvid
             return Unauthorized(_response);
         }
 
-        var assignRoleSuccessful = await _authService.AssignRole(model.Email, model.Role.ToUpper());
+        var assignRoleSuccessful = await _authService.AssignRole(model);
         if (!assignRoleSuccessful)
         {
             _response.IsSuccess = false;

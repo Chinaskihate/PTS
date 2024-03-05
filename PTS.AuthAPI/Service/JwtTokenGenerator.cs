@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using PTS.AuthAPI.Models;
 using PTS.AuthAPI.Service.IService;
 using PTS.Backend.Auth;
 using PTS.Persistence.Models.Users;

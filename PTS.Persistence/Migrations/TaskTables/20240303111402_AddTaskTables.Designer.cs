@@ -12,7 +12,7 @@ using PTS.Persistence.DbContexts;
 namespace PTS.Persistence.Migrations.TaskTables
 {
     [DbContext(typeof(TaskDbContext))]
-    [Migration("20240227004540_AddTaskTables")]
+    [Migration("20240303111402_AddTaskTables")]
     partial class AddTaskTables
     {
         /// <inheritdoc />
@@ -24,6 +24,32 @@ namespace PTS.Persistence.Migrations.TaskTables
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("PTS.Persistence.Models.Tasks.Task", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AvgTimeInMin")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Complexity")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tasks");
+                });
 
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>
                 {
@@ -58,6 +84,21 @@ namespace PTS.Persistence.Migrations.TaskTables
                         });
                 });
 
+            modelBuilder.Entity("TaskTheme", b =>
+                {
+                    b.Property<int>("TasksId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ThemesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TasksId", "ThemesId");
+
+                    b.HasIndex("ThemesId");
+
+                    b.ToTable("TaskTheme");
+                });
+
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>
                 {
                     b.HasOne("PTS.Persistence.Models.Themes.Theme", "Parent")
@@ -65,6 +106,21 @@ namespace PTS.Persistence.Migrations.TaskTables
                         .HasForeignKey("ParentId");
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("TaskTheme", b =>
+                {
+                    b.HasOne("PTS.Persistence.Models.Tasks.Task", null)
+                        .WithMany()
+                        .HasForeignKey("TasksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PTS.Persistence.Models.Themes.Theme", null)
+                        .WithMany()
+                        .HasForeignKey("ThemesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>
