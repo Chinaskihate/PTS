@@ -35,11 +35,6 @@ public class TaskVersionService(
         return _mapper.Map<TaskDto>(task);
     }
 
-    public Task<TaskDto> CreateTestCaseAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<TaskDto> EditAsync(int taskId, int versionId, EditVersionRequest dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
@@ -56,10 +51,5 @@ public class TaskVersionService(
         await context.SaveChangesAsync();
 
         return _mapper.Map<TaskDto>(task);
-    }
-
-    public Task<TaskDto> EditTestCaseAsync()
-    {
-        throw new NotImplementedException();
     }
 }

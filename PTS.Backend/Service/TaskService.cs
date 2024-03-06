@@ -24,6 +24,7 @@ public class TaskService(
             IsEnabled = dto.IsEnabled,
             AvgTimeInMin = dto.AvgTimeInMin,
             Complexity = dto.Complexity,
+            Type = dto.Type,
             Name = dto.Name,
             Themes = themes,
         };

@@ -16,6 +16,8 @@ public class Task
     [Required]
     public int AvgTimeInMin { get; set; }
     [Required]
+    public TaskType Type { get; set; }
+    [Required]
     public List<Theme> Themes { get; set; } = [];
     public List<TaskVersion> Versions { get; set; } = [];
 }

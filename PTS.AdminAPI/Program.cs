@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using PTS.AdminAPI.Services;
 using PTS.Backend.Extensions;
 using PTS.Backend.Mappings;
 using PTS.Backend.Middlewares;
@@ -43,6 +44,7 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<IUserService, UserService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
@@ -62,8 +64,6 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
-
-    //MigrationHelper.ApplyUserMigration(app.Services);
 
     app.Run();
 }

@@ -12,40 +12,20 @@ namespace PTS.AuthAPI.Service;
 public class AuthService(
     IDbContextFactory<UserDbContext> dbFactory,
     UserManager<ApplicationUser> userManager,
-    RoleManager<IdentityRole> roleManager,
     IJwtTokenGenerator tokenGenerator,
     ITokenStorer tokenStorer) : IAuthService
 {
     private readonly IDbContextFactory<UserDbContext> _dbFactory = dbFactory;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IJwtTokenGenerator _tokenGenerator = tokenGenerator;
     private readonly ITokenStorer _tokenStorer = tokenStorer;
 
-    public async Task<bool> AssignRole(AssignRoleRequestDto dto)
-    {
-        var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user != null)
-        {
-            var roleName = dto.Role.ToUpper();
-            if (!(await _roleManager.RoleExistsAsync(roleName)) && UserRoles.AllRoles.Contains(roleName))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(roleName));
-            }
-            
-            await _userManager.AddToRoleAsync(user, roleName);
-            return true;
-        }
-
-        return false;
-    }
-
-    public async Task<bool> CheckToken(string token)
+    public async Task<bool> CheckTokenAsync(string token)
     {
         return _tokenStorer.CheckToken(token);
     }
 
-    public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
+    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto loginRequestDto)
     {
         using var context = _dbFactory.CreateDbContext();
         var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
@@ -62,7 +42,7 @@ public class AuthService(
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = _tokenGenerator.GenerateToken(user, roles);
-        _tokenStorer.AddOrUpdateToken(user, token);
+        _tokenStorer.AddOrUpdateToken(user.Id, token);
 
         UserDto userDto = new()
         {
@@ -84,7 +64,7 @@ public class AuthService(
         return loginResponseDto;
     }
 
-    public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
+    public async Task<string> RegisterAsync(RegistrationRequestDto registrationRequestDto)
     {
         ApplicationUser user = new()
         {
@@ -129,10 +109,8 @@ public class AuthService(
         }
     }
 
-    public async Task<bool> RevokeToken(RevokeTokenDto dto)
+    public async Task<bool> RevokeTokenAsync(string userId)
     {
-        using var context = _dbFactory.CreateDbContext();
-        var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == dto.UserName.ToLower());
-        return user == null ? false : _tokenStorer.RemoveToken(user);
+        return string.IsNullOrWhiteSpace(userId) ? false : _tokenStorer.RemoveToken(userId);
     }
 }

@@ -1,10 +1,8 @@
-﻿using PTS.Persistence.Models.Users;
-
-namespace PTS.AuthAPI.Service.IService;
+﻿namespace PTS.AuthAPI.Service.IService;
 
 public interface ITokenStorer
 {
-    void AddOrUpdateToken(ApplicationUser user, string token);
-    bool RemoveToken(ApplicationUser user);
+    void AddOrUpdateToken(string userId, string token);
+    bool RemoveToken(string userId);
     bool CheckToken(string token);
 }
