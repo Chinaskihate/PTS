@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Service.IService;
@@ -14,21 +15,34 @@ namespace PTS.AdminAPI.Controllers;
 [Route("api/admin")]
 [ApiController]
 [Authorize(Roles = UserRoles.AnyAdmin)]
-public class AdminController(IDbContextFactory<UserDbContext> dbFactory, IMapper mapper, IAuthService authService) : ControllerBase
+public class AdminController(
+    IDbContextFactory<UserDbContext> dbFactory,
+    UserManager<ApplicationUser> userManager,
+    IMapper mapper,
+    IAuthService authService) : ControllerBase
 {
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IDbContextFactory<UserDbContext> _dbFactory = dbFactory;
     private readonly IMapper _mapper = mapper;
     private readonly IAuthService _authService = authService;
     private ResponseDto _response = new();
 
     [HttpGet("Users")]
-    public ResponseDto Get()
+    public async Task<ResponseDto> Get()
     {
         try
         {
             using var context = _dbFactory.CreateDbContext();
-            IEnumerable<ApplicationUser> users = context.ApplicationUsers.ToList();
-            _response.Result = _mapper.Map<IEnumerable<UserDto>>(users);
+            var users = context.ApplicationUsers.ToList();
+            var dtos = new List<UserDto>();
+            foreach (var user in users)
+            {
+                var dto = _mapper.Map<UserDto>(user);
+                dto.Roles = (await _userManager.GetRolesAsync(user)).ToArray();
+                dtos.Add(dto);
+            }
+
+            _response.Result = dtos;
         }
         catch (Exception ex)
         {
@@ -40,13 +54,15 @@ public class AdminController(IDbContextFactory<UserDbContext> dbFactory, IMapper
 
     [HttpGet]
     [Route("Users/{id}")]
-    public ResponseDto Get(string id)
+    public async Task<ResponseDto> Get(string id)
     {
         try
         {
             using var context = _dbFactory.CreateDbContext();
             var user = context.ApplicationUsers.First(u => u.Id == id);
-            _response.Result = _mapper.Map<UserDto>(user);
+            var dto = _mapper.Map<UserDto>(user);
+            dto.Roles = (await _userManager.GetRolesAsync(user)).ToArray();
+            _response.Result = dto;
         }
         catch (Exception ex)
         {

@@ -1,16 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Auth.Dto;
 using PTS.Contracts.Common;
 using PTS.Contracts.Users;
+using PTS.Persistence.Models.Users;
 using IAuthService = PTS.AuthAPI.Service.IService.IAuthService;
 
 namespace PTS.AuthAPI.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IAuthService authService, ITokenProvider tokenProvider) : ControllerBase
+public class AuthController(
+    IAuthService authService,
+    ITokenProvider tokenProvider) : ControllerBase
 {
     private readonly IAuthService _authService = authService;
     private readonly ITokenProvider _tokenProvider = tokenProvider;

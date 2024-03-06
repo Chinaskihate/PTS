@@ -67,4 +67,15 @@ public class TaskService(
         var result = _mapper.Map<TaskDto>(task);
         return result;
     }
+
+    public async Task<TaskDto> GetAsync(int id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var task = await context.Tasks
+            .Include(t => t.Versions)
+            .FirstAsync(t => t.Id == id);
+
+        var result = _mapper.Map<TaskDto>(task);
+        return result;
+    }
 }
