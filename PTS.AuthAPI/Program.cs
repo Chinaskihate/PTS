@@ -69,6 +69,7 @@ try
         await CreateUserAsync("theme@gmail.com", "themE12345!", "Theme", UserRoles.ThemeManager);
         await CreateUserAsync("task@gmail.com", "tasK12345!", "Task", UserRoles.TaskManager);
         await CreateUserAsync("test@gmail.com", "tesT12345!", "Test", UserRoles.TestManager);
+        await CreateUserAsync("tgbot@gmail.com", "tgboT12345!", "TgBot", UserRoles.TelegramBot);
 
         async Task CreateUserAsync(string email, string password, string name, string roleName)
         {

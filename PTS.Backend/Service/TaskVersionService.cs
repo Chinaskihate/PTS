@@ -40,6 +40,7 @@ public class TaskVersionService(
         using var context = _dbContextFactory.CreateDbContext();
         var task = context.Tasks
             .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
             .FirstOrDefault(t => t.Id == taskId) ?? throw new NotFoundException($"Task {taskId} not found");
         var version = task.Versions
             .FirstOrDefault(v => v.Id == versionId) ?? throw new NotFoundException($"Version {versionId} not found");

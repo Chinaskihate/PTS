@@ -47,6 +47,22 @@ public class AuthController(
         return Ok(_response);
     }
 
+    [HttpPost("{telegramId}/TelegramLogin")]
+    [Authorize(Roles = UserRoles.TelegramBot)]
+    public async Task<IActionResult> TelegramLogin(string telegramId)
+    {
+        var loginResponse = await _authService.TelegramLoginAsync(telegramId);
+        if (loginResponse.User == null)
+        {
+            _response.IsSuccess = false;
+            _response.Message = "auth failed";
+            return BadRequest(_response);
+        }
+
+        _response.Result = loginResponse;
+        return Ok(_response);
+    }
+
     [HttpPost("{id}/RevokeToken")]
     [Authorize(Roles = UserRoles.AnyAdmin)]
     public async Task<IActionResult> RevokeToken(string id)

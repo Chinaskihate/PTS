@@ -30,7 +30,6 @@ public class AuthService(
         using var context = _dbFactory.CreateDbContext();
         var user = context.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
         bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-        //context.Entry(user).Reload();
         if (user == null || !isValid || user.IsBanned)
         {
             return new LoginResponseDto()
@@ -112,5 +111,42 @@ public class AuthService(
     public async Task<bool> RevokeTokenAsync(string userId)
     {
         return string.IsNullOrWhiteSpace(userId) ? false : _tokenStorer.RemoveToken(userId);
+    }
+
+    public async Task<LoginResponseDto> TelegramLoginAsync(string telegramId)
+    {
+        using var context = _dbFactory.CreateDbContext();
+        var user = context.ApplicationUsers.FirstOrDefault(u => u.TelegramId == telegramId);
+        if (user == null || user.IsBanned)
+        {
+            return new LoginResponseDto()
+            {
+                User = null,
+                Token = string.Empty
+            };
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _tokenGenerator.GenerateToken(user, roles);
+        _tokenStorer.AddOrUpdateToken(user.Id, token);
+
+        UserDto userDto = new()
+        {
+            Email = user.Email,
+            Id = user.Id,
+            TelegramId = user.TelegramId,
+            IsBanned = user.IsBanned,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+        };
+
+        LoginResponseDto loginResponseDto = new()
+        {
+            User = userDto,
+            Token = token,
+            Roles = roles?.ToArray() ?? new string[0],
+        };
+
+        return loginResponseDto;
     }
 }

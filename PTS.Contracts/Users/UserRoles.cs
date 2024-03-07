@@ -6,6 +6,7 @@ public static class UserRoles
     public const string TestManager = "TEST_MANAGER";
     public const string Admin = "ADMIN";
     public const string RootAdmin = "ROOT_ADMIN";
+    public const string TelegramBot = "TELEGRAM_BOT";
     public const string AnyAdmin = Admin + "," + RootAdmin;
     public const string ThemeManagerRoles = ThemeManager + "," + Admin + "," + RootAdmin;
     public const string TaskManagerRoles = TaskManager + "," + Admin + "," + RootAdmin;
@@ -18,6 +19,6 @@ public static class UserRoles
         Admin,
         RootAdmin,
         AnyAdmin,
-        ThemeManagerRoles,
+        ThemeManagerRoles
     };
 }
