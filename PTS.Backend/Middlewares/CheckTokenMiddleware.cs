@@ -2,14 +2,13 @@
 using PTS.Backend.Service.IService;
 
 namespace PTS.Backend.Middlewares;
-public class CheckTokenMiddleware(RequestDelegate next, IAuthService authService)
+public class CheckTokenMiddleware(RequestDelegate next)
 {
     private readonly RequestDelegate _next = next;
-    private readonly IAuthService _authService = authService;
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, IAuthService authService)
     {
-        var response = await _authService.CheckTokenAsync();
+        var response = await authService.CheckTokenAsync();
         if ((bool)response.Result)
         {
             await this._next(context);

@@ -12,7 +12,7 @@ public class AuthService(IBaseService baseService) : IAuthService
         return await _baseService.SendAsync(new RequestDto
         {
             ApiType = ApiType.POST,
-            Url = SD.AuthAPIBase + "/api/auth/сheck-token",
+            Url = SD.AuthAPIBase + "/api/auth/CheckToken",
         });
     }
 
@@ -21,7 +21,7 @@ public class AuthService(IBaseService baseService) : IAuthService
         return await _baseService.SendAsync(new RequestDto
         {
             ApiType = ApiType.POST,
-            Url = SD.AuthAPIBase + $"/api/auth/{id}/revoke-token",
+            Url = SD.AuthAPIBase + $"/api/auth/{id}/RevokeToken",
         });
     }
 }

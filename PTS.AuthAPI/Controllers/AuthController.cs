@@ -47,7 +47,7 @@ public class AuthController(
         return Ok(_response);
     }
 
-    [HttpPost("{id}/revoke-token")]
+    [HttpPost("{id}/RevokeToken")]
     [Authorize(Roles = UserRoles.AnyAdmin)]
     public async Task<IActionResult> RevokeToken(string id)
     {
@@ -63,7 +63,7 @@ public class AuthController(
         return Ok(_response);
     }
 
-    [HttpPost("check-token")]
+    [HttpPost("CheckToken")]
     public async Task<IActionResult> CheckToken()
     {
         _response.Result = await CheckCurrentToken();
