@@ -18,7 +18,10 @@ public class TaskVersionService(
     public async Task<TaskDto> CreateAsync(int taskId, CreateVersionRequest dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var task = context.Tasks.FirstOrDefault(t => t.Id == taskId) ?? throw new NotFoundException($"Task {taskId} not found");
+        var task = context.Tasks
+            .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
+            .FirstOrDefault(t => t.Id == taskId) ?? throw new NotFoundException($"Task {taskId} not found");
         var version = new TaskVersion()
         {
             Description = dto.Description,

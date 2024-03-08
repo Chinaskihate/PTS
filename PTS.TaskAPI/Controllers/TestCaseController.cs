@@ -15,7 +15,7 @@ public class TestCaseController(ITestCaseService testCaseService) : ControllerBa
     private readonly ResponseDto _response = new();
     private readonly ITestCaseService _testCaseService = testCaseService;
 
-    [HttpPost("{taskId:int}/version/{versionId:int}")]
+    [HttpPost("{taskId:int}/version/{versionId:int}/case")]
     [Authorize(Roles = UserRoles.TaskManagerRoles)]
     public async Task<IActionResult> Create(int taskId, int versionId, [FromBody] CreateTestCaseRequest dto)
     {
@@ -25,9 +25,18 @@ public class TestCaseController(ITestCaseService testCaseService) : ControllerBa
 
     [HttpPost("{taskId:int}/version/{versionId:int}/case/{testCaseId:int}")]
     [Authorize(Roles = UserRoles.TaskManagerRoles)]
-    public async Task<IActionResult> Create(int taskId, int versionId, int testCaseId, [FromBody] EditTestCaseRequest dto)
+    public async Task<IActionResult> Edit(int taskId, int versionId, int testCaseId, [FromBody] EditTestCaseRequest dto)
     {
         _response.Result = await _testCaseService.EditAsync(taskId, versionId, testCaseId, dto);
+        return Ok(_response);
+    }
+
+
+    [HttpDelete("{taskId:int}/version/{versionId:int}/case/{testCaseId:int}")]
+    [Authorize(Roles = UserRoles.TaskManagerRoles)]
+    public async Task<IActionResult> Delete(int taskId, int versionId, int testCaseId)
+    {
+        _response.Result = await _testCaseService.DeleteAsync(taskId, versionId, testCaseId);
         return Ok(_response);
     }
 }
