@@ -30,12 +30,12 @@ try
 
     // Add services to the container.
 
-    builder.AddCors();
+    builder.AddCorsPTS();
     builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<UserDbContext>()
         .AddDefaultTokenProviders();
-    builder.AddAppAuthentication(forAuthAPI: true);
+    builder.AddAppAuthenticationPTS(forAuthAPI: true);
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddSingleton<ITokenStorer, TokenStorer>();
@@ -48,8 +48,8 @@ try
     var app = builder.Build();
 
     app.UseCors();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerPTS();
+    app.UseExceptionHandlerPTS();
 
     app.UseHttpsRedirection();
 

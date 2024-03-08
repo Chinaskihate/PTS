@@ -9,7 +9,7 @@ using System.Text;
 namespace PTS.Backend.Extensions;
 public static class AuthExtensions
 {
-    public static WebApplicationBuilder AddAppAuthentication(
+    public static WebApplicationBuilder AddAppAuthenticationPTS(
         this WebApplicationBuilder builder,
         bool forAuthAPI = false)
     {
