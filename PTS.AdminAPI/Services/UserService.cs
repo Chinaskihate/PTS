@@ -41,11 +41,11 @@ public class UserService(
     private async Task BanAsync(ApplicationUser user)
     {
         user.IsBanned = true;
-        var response = await _authService.RevokeTokenAsync(user.Id);
-        if (!response.IsSuccess)
-        {
-            throw new Exception(response.Message);
-        }
+        //var response = await _authService.RevokeTokenAsync(user.Id);
+        //if (!response.IsSuccess)
+        //{
+        //    throw new Exception(response.Message);
+        //}
     }
 
     private async Task UnbanAsync(ApplicationUser user)
@@ -55,20 +55,25 @@ public class UserService(
 
     private async Task<bool> AssignRoles(ApplicationUser user, string[] roles)
     {
-        if (roles.IsNullOrEmpty() || user == null)
+        if (user == null)
         {
             throw new NullReferenceException();
         }
 
-        foreach (var role in roles)
-        {
-            var roleName = role.ToUpper();
-            if (!(await _roleManager.RoleExistsAsync(roleName)) && UserRoles.AllRoles.Contains(roleName))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(roleName));
-            }
+        await _userManager.RemoveFromRolesAsync(user, UserRoles.AllRoles);
 
-            await _userManager.AddToRoleAsync(user, roleName);
+        if (roles.IsNullOrEmpty())
+        {
+            foreach (var role in roles)
+            {
+                var roleName = role.ToUpper();
+                if (!(await _roleManager.RoleExistsAsync(roleName)) && UserRoles.AllRoles.Contains(roleName))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+
+                await _userManager.AddToRoleAsync(user, roleName);
+            }
         }
 
         return true;

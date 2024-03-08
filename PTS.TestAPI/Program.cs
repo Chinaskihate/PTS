@@ -25,7 +25,7 @@ try
 
     // Add services to the container.
     builder.AddCorsPTS();
-    builder.Services.AddTaskDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
+    builder.Services.AddTestDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
@@ -54,6 +54,8 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    MigrationHelper.ApplyTestMigration(app.Services);
 
     app.Run();
 }
