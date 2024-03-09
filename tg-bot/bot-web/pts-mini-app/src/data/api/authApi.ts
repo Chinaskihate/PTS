@@ -2,7 +2,7 @@ import {cookie} from "../store";
 import {$authHost} from "./index";
 
 export const authorization = async (telegramId: number) => {
-    return {isAuth: true, user: {email: "test@mail.ru", telegramId: telegramId}}
+    return {isAuth: false, user: {email: "test@mail.ru", telegramId: telegramId}}
 }
 
 export const login = async (email: string, password: string, telegramId: number) => {
@@ -12,11 +12,11 @@ export const login = async (email: string, password: string, telegramId: number)
     cookie.set("token", result?.token)
     console.log(JSON.stringify(data))
 
-    return {isAuth: isSuccess, user: {email: result?.user?.email, telegramId: telegramId}}
+    return {isAuth: isSuccess, user: {email: result?.user?.email, telegramId: result?.user?.telegramId}}
 }
 
 export const registration = async (email: string, password: string, telegramId: number) => {
-    const {data} = await $authHost.post(process.env.REACT_APP_AUTH_REGISTER as string, {email: email, telegramId: String(telegramId), phoneNumber: "", password: password, role: "ADMIN"})
+    const {data} = await $authHost.post(process.env.REACT_APP_AUTH_REGISTER as string, {email: email, telegramId: String(telegramId), password: password})
 
     const {isSuccess} = data
     if (isSuccess) {
