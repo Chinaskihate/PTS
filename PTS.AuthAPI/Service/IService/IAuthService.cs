@@ -1,13 +1,12 @@
 ﻿using PTS.Contracts.Auth.Dto;
-using PTS.Contracts.Users;
 
 namespace PTS.AuthAPI.Service.IService;
 
 public interface IAuthService
 {
-    Task<string> Register(RegistrationRequestDto dto);
-    Task<LoginResponseDto> Login(LoginRequestDto dto);
-    Task<bool> AssignRole(AssignRoleRequestDto dto);
-    Task<bool> RevokeToken(RevokeTokenDto dto);
-    Task<bool> CheckToken(string token);
+    Task<string> RegisterAsync(RegistrationRequestDto dto);
+    Task<LoginResponseDto> LoginAsync(LoginRequestDto dto);
+    Task<LoginResponseDto> TelegramLoginAsync(string telegramId);
+    Task<bool> RevokeTokenAsync(string userId);
+    Task<bool> CheckTokenAsync(string token);
 }

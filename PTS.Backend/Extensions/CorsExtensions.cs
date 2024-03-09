@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PTS.Backend.Extensions;
 public static class CorsExtensions
 {
-    public static WebApplicationBuilder AddCors(
+    public static WebApplicationBuilder AddCorsPTS(
         this WebApplicationBuilder builder)
     {
         builder.Services.AddCors(options =>

@@ -96,6 +96,23 @@ services:
       - ./localhost.pfx:/https/localhost.pfx:ro
       - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
+  test-api:
+    container_name: pts-test-api
+    build:
+      context: .
+      dockerfile: PTS.TestAPI/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+:7006
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    ports:
+      - "7006:7006"
+    depends_on:
+      - db
+    volumes:
+      - ./localhost.pfx:/https/localhost.pfx:ro
+      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
+    restart: always
 volumes:
   db:
   pg-admin:

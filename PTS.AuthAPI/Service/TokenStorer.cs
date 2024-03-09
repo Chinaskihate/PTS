@@ -1,5 +1,4 @@
 ﻿using PTS.AuthAPI.Service.IService;
-using PTS.Persistence.Models.Users;
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -9,9 +8,9 @@ public class TokenStorer : ITokenStorer
 {
     private readonly ConcurrentDictionary<string, string> _tokens = new ConcurrentDictionary<string, string>();
 
-    public void AddOrUpdateToken(ApplicationUser user, string token)
+    public void AddOrUpdateToken(string userId, string token)
     {
-        _tokens.AddOrUpdate(user.Id, token, (key, oldValue) => token);
+        _tokens.AddOrUpdate(userId, token, (key, oldValue) => token);
     }
 
     public bool CheckToken(string token)
@@ -32,8 +31,8 @@ public class TokenStorer : ITokenStorer
         return _tokens.ContainsKey(claim.Value);
     }
 
-    public bool RemoveToken(ApplicationUser user)
+    public bool RemoveToken(string userId)
     {
-        return _tokens.Remove(user.Id, out _);
+        return _tokens.Remove(userId, out _);
     }
 }

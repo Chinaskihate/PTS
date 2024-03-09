@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using PTS.AdminAPI.Services;
 using PTS.Backend.Extensions;
 using PTS.Backend.Mappings;
-using PTS.Backend.Middlewares;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
 using PTS.Backend.Utils;
@@ -28,7 +28,7 @@ try
     SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
 
     // Add services to the container.
-    builder.AddCors();
+    builder.AddCorsPTS();
     builder.Services.AddUsersDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
     builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<UserDbContext>()
@@ -43,27 +43,27 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<IUserService, UserService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
 
-    builder.AddAppAuthentication();
+    builder.AddAppAuthenticationPTS();
     builder.Services.AddAuthorization();
 
     var app = builder.Build();
 
     app.UseCors();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerPTS();
+    app.UseExceptionHandlerPTS();
 
     app.UseHttpsRedirection();
-    app.UseMiddleware<CheckTokenMiddleware>();
     app.UseAuthentication();
     app.UseAuthorization();
 
+
     app.MapControllers();
 
-    //MigrationHelper.ApplyUserMigration(app.Services);
 
     app.Run();
 }

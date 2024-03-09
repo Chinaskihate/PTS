@@ -5,5 +5,5 @@ namespace PTS.Backend.Service.IService;
 public interface IAuthService
 {
     Task<ResponseDto?> CheckTokenAsync();
-    Task<ResponseDto?> RevokeTokenAsync(LoginRequestDto loginRequestDto);
+    Task<ResponseDto?> RevokeTokenAsync(string id);
 }

@@ -43,9 +43,40 @@ namespace PTS.Persistence.Migrations.TaskTables
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("PTS.Persistence.Models.TestCases.TestCase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Input")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("IsCorrect")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Output")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("VersionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VersionId");
+
+                    b.ToTable("TestCases");
                 });
 
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>
@@ -127,6 +158,17 @@ namespace PTS.Persistence.Migrations.TaskTables
                     b.ToTable("TaskTheme");
                 });
 
+            modelBuilder.Entity("PTS.Persistence.Models.TestCases.TestCase", b =>
+                {
+                    b.HasOne("PTS.Persistence.Models.Versions.TaskVersion", "Version")
+                        .WithMany("TestCases")
+                        .HasForeignKey("VersionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Version");
+                });
+
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>
                 {
                     b.HasOne("PTS.Persistence.Models.Themes.Theme", "Parent")
@@ -170,6 +212,11 @@ namespace PTS.Persistence.Migrations.TaskTables
             modelBuilder.Entity("PTS.Persistence.Models.Themes.Theme", b =>
                 {
                     b.Navigation("Children");
+                });
+
+            modelBuilder.Entity("PTS.Persistence.Models.Versions.TaskVersion", b =>
+                {
+                    b.Navigation("TestCases");
                 });
 #pragma warning restore 612, 618
         }

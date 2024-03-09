@@ -18,7 +18,10 @@ public class TaskVersionService(
     public async Task<TaskDto> CreateAsync(int taskId, CreateVersionRequest dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var task = context.Tasks.FirstOrDefault(t => t.Id == taskId) ?? throw new NotFoundException($"Task {taskId} not found");
+        var task = context.Tasks
+            .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
+            .FirstOrDefault(t => t.Id == taskId) ?? throw new NotFoundException($"Task {taskId} not found");
         var version = new TaskVersion()
         {
             Description = dto.Description,
@@ -35,16 +38,12 @@ public class TaskVersionService(
         return _mapper.Map<TaskDto>(task);
     }
 
-    public Task<TaskDto> CreateTestCaseAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<TaskDto> EditAsync(int taskId, int versionId, EditVersionRequest dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var task = context.Tasks
             .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
             .FirstOrDefault(t => t.Id == taskId) ?? throw new NotFoundException($"Task {taskId} not found");
         var version = task.Versions
             .FirstOrDefault(v => v.Id == versionId) ?? throw new NotFoundException($"Version {versionId} not found");
@@ -56,10 +55,5 @@ public class TaskVersionService(
         await context.SaveChangesAsync();
 
         return _mapper.Map<TaskDto>(task);
-    }
-
-    public Task<TaskDto> EditTestCaseAsync()
-    {
-        throw new NotImplementedException();
     }
 }

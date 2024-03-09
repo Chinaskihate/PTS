@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PTS.Contracts.Constants;
+using PTS.Persistence.Models.TestCases;
 using PTS.Persistence.Models.Themes;
 using PTS.Persistence.Models.Versions;
 using System.Reflection.Metadata;
@@ -21,6 +22,7 @@ public class TaskDbContext : DbContext
     public DbSet<Theme> Themes { get; set; }
     public DbSet<Task> Tasks { get; set; }
     public DbSet<TaskVersion> TaskVersions { get; set; }
+    public DbSet<TestCase> TestCases { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

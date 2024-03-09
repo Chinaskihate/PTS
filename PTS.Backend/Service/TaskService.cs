@@ -24,6 +24,7 @@ public class TaskService(
             IsEnabled = dto.IsEnabled,
             AvgTimeInMin = dto.AvgTimeInMin,
             Complexity = dto.Complexity,
+            Type = dto.Type,
             Name = dto.Name,
             Themes = themes,
         };
@@ -57,6 +58,7 @@ public class TaskService(
 
         var task = await context.Tasks
             .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
             .FirstAsync(t => t.Id == id);
 
         task.Themes = themes;
