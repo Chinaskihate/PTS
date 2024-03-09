@@ -31,8 +31,8 @@ public class TokenStorer : ITokenStorer
         return _tokens.ContainsKey(claim.Value);
     }
 
-    public bool RemoveToken(string userId)
+    public void RemoveToken(string userId)
     {
-        return _tokens.Remove(userId, out _);
+        _tokens.Remove(userId, out _);
     }
 }

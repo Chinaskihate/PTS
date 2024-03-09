@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Users;
 using PTS.Contracts.Users.Dto;
@@ -22,7 +23,8 @@ public class UserService(
 
     public async Task<UserDto> EditUserAsync(string id, EditUserRequest dto)
     {
-        var user = await _userManager.FindByIdAsync(id);
+        var user = await _userManager.FindByIdAsync(id) ?? throw new NotFoundException($"User {id} not found.");
+
         await AssignRoles(user, dto.Roles);
         if (dto.IsBanned)
         {
@@ -41,11 +43,11 @@ public class UserService(
     private async Task BanAsync(ApplicationUser user)
     {
         user.IsBanned = true;
-        //var response = await _authService.RevokeTokenAsync(user.Id);
-        //if (!response.IsSuccess)
-        //{
-        //    throw new Exception(response.Message);
-        //}
+        var response = await _authService.RevokeTokenAsync(user.Id);
+        if (!response.IsSuccess)
+        {
+            throw new Exception(response.Message);
+        }
     }
 
     private async Task UnbanAsync(ApplicationUser user)
@@ -55,11 +57,6 @@ public class UserService(
 
     private async Task<bool> AssignRoles(ApplicationUser user, string[] roles)
     {
-        if (user == null)
-        {
-            throw new NullReferenceException();
-        }
-
         await _userManager.RemoveFromRolesAsync(user, UserRoles.AllRoles);
 
         if (roles.IsNullOrEmpty())

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json;
+using PTS.Backend.Exceptions.Common;
 using PTS.Contracts.Common;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
@@ -31,6 +32,12 @@ internal class CustomExceptionHandlerMiddleware(RequestDelegate next)
         {
             case ValidationException:
                 code = HttpStatusCode.BadRequest;
+                break;
+            case BadRequestException:
+                code = HttpStatusCode.BadRequest;
+                break;
+            case NotFoundException:
+                code = HttpStatusCode.NotFound;
                 break;
         }
 
