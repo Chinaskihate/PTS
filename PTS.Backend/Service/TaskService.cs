@@ -77,11 +77,24 @@ public class TaskService(
         return result;
     }
 
+    public async Task<List<TaskDto>> GetAllAsync()
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var tasks = await context.Tasks
+            .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
+            .ToListAsync();
+
+        var result = _mapper.Map<List<TaskDto>>(tasks);
+        return result;
+    }
+
     public async Task<TaskDto> GetAsync(int id)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var task = await context.Tasks
             .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
             .FirstAsync(t => t.Id == id);
 
         var result = _mapper.Map<TaskDto>(task);
