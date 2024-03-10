@@ -57,7 +57,8 @@ public class UserService(
 
     private async Task<bool> AssignRoles(ApplicationUser user, string[] roles)
     {
-        await _userManager.RemoveFromRolesAsync(user, UserRoles.AllRoles);
+        var userRoles = await _userManager.GetRolesAsync(user);
+        await _userManager.RemoveFromRolesAsync(user, userRoles);
 
         if (roles.IsNullOrEmpty())
         {

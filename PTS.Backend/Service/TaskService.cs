@@ -3,14 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Persistence.DbContexts;
-using PTS.Persistence.Models.Versions;
 
 namespace PTS.Backend.Service;
 public class TaskService(
     IDbContextFactory<TaskDbContext> dbContextFactory,
+    ITaskVersionService taskVersionService,
     IMapper mapper) : ITaskService
 {
     private readonly IDbContextFactory<TaskDbContext> _dbContextFactory = dbContextFactory;
+    private readonly ITaskVersionService _taskVersionService = taskVersionService;
     private readonly IMapper _mapper = mapper;
 
     public async Task<TaskDto> CreateAsync(CreateTaskRequestDto dto)
@@ -30,22 +31,18 @@ public class TaskService(
         };
         context.Tasks.Add(task);
 
-        var version = new TaskVersion
-        {
-            Description = dto.Description,
-            InputCondition = dto.InputCondition,
-            OutputCondition = dto.OutputCondition,
-            ProgrammingLanguage = (int)dto.ProgrammingLanguage,
-            Task = task
-        };
-        context.TaskVersions.Add(version);
-
         await context.SaveChangesAsync();
 
         var createdTask = await context.Tasks
             .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
             .FirstAsync(t => t.Id == task.Id);
         var result = _mapper.Map<TaskDto>(createdTask);
+        foreach (var version in dto.Versions)
+        {
+            result = await _taskVersionService.CreateAsync(task.Id, version);
+        }
+
         return result;
     }
 
@@ -67,6 +64,16 @@ public class TaskService(
         await context.SaveChangesAsync();
 
         var result = _mapper.Map<TaskDto>(task);
+        foreach (var version in dto.NewVersions)
+        {
+            result = await _taskVersionService.CreateAsync(task.Id, version);
+        }
+
+        foreach (var version in dto.EditedVersions)
+        {
+            result = await _taskVersionService.EditAsync(task.Id, version);
+        }
+
         return result;
     }
 

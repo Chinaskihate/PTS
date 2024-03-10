@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Tasks.Dto;
@@ -59,7 +58,25 @@ public class TestCaseService(
             .ThenInclude(v => v.TestCases)
             .FirstOrDefaultAsync(t => t.Id == taskId);
         var version = task.Versions.FirstOrDefault(v => v.Id == versionId);
-        var testCase = version.TestCases.FirstOrDefault(v => v.Id == versionId);
+        var testCase = version.TestCases.FirstOrDefault(v => v.Id == caseId);
+        testCase.Input = dto.Input;
+        testCase.Output = dto.Output;
+        testCase.IsCorrect = dto.IsCorrect;
+
+        await context.SaveChangesAsync();
+
+        return _mapper.Map<TaskDto>(task);
+    }
+
+    public async Task<TaskDto> EditAsync(int taskId, int versionId, EditTestCaseWithIdRequest dto)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var task = await context.Tasks
+            .Include(t => t.Versions)
+            .ThenInclude(v => v.TestCases)
+            .FirstOrDefaultAsync(t => t.Id == taskId);
+        var version = task.Versions.FirstOrDefault(v => v.Id == versionId);
+        var testCase = version.TestCases.FirstOrDefault(v => v.Id == dto.Id);
         testCase.Input = dto.Input;
         testCase.Output = dto.Output;
         testCase.IsCorrect = dto.IsCorrect;

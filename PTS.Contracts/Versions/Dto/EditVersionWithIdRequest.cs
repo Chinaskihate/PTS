@@ -2,8 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace PTS.Contracts.Versions.Dto;
-public class EditVersionRequest
+public class EditVersionWithIdRequest
 {
+    [Required]
+    public int Id { get; set; }
     [Required]
     public string Description { get; set; } = string.Empty;
     public string? InputCondition { get; set; }
