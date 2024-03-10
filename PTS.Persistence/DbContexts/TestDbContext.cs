@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PTS.Persistence.Models.Results;
 using PTS.Persistence.Models.Tests;
 using PTS.Persistence.Models.Tests.Versions;
 
@@ -16,6 +17,8 @@ public class TestDbContext : DbContext
     }
 
     public DbSet<Test> Tests { get; set; }
+    public DbSet<TestResult> TestResults { get; set; }
+    public DbSet<TaskResult> TaskResults { get; set; }
     public DbSet<TestTaskVersion> TestTaskVersions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

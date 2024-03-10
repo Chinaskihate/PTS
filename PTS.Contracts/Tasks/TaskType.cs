@@ -1,8 +1,8 @@
 ﻿namespace PTS.Contracts.Tasks;
 public enum TaskType
 {
-    SingleChoice,
-    MultipleChoice,
-    StringAnswer,
-    ExecutableCode
+    SingleChoice = 0,
+    MultipleChoice = 1,
+    StringAnswer = 2,
+    ExecutableCode = 3
 }
