@@ -18,6 +18,7 @@ public class TestCaseService(
     {
         using var context = _dbContextFactory.CreateDbContext();
         var task = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstOrDefaultAsync(t => t.Id == taskId);
@@ -39,6 +40,7 @@ public class TestCaseService(
     {
         using var context = _dbContextFactory.CreateDbContext();
         var task = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstOrDefaultAsync(t => t.Id == taskId);
@@ -54,6 +56,7 @@ public class TestCaseService(
     {
         using var context = _dbContextFactory.CreateDbContext();
         var task = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstOrDefaultAsync(t => t.Id == taskId);
@@ -72,6 +75,7 @@ public class TestCaseService(
     {
         using var context = _dbContextFactory.CreateDbContext();
         var task = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstOrDefaultAsync(t => t.Id == taskId);

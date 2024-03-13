@@ -7,8 +7,6 @@ public class CreateTaskRequestDto
     [Required]
     public int[] ThemeIds { get; set; } = [];
     [Required]
-    public ProgrammingLanguage ProgrammingLanguage { get; set; }
-    [Required]
     public bool IsEnabled { get; set; }
     [Required]
     public TaskType Type { get; set; }

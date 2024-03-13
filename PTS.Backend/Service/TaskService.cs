@@ -34,6 +34,7 @@ public class TaskService(
         await context.SaveChangesAsync();
 
         var createdTask = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstAsync(t => t.Id == task.Id);
@@ -54,6 +55,7 @@ public class TaskService(
             .ToListAsync();
 
         var task = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstAsync(t => t.Id == id);
@@ -81,6 +83,7 @@ public class TaskService(
     {
         using var context = _dbContextFactory.CreateDbContext();
         var tasks = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .ToListAsync();
@@ -93,6 +96,7 @@ public class TaskService(
     {
         using var context = _dbContextFactory.CreateDbContext();
         var task = await context.Tasks
+            .Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstAsync(t => t.Id == id);
