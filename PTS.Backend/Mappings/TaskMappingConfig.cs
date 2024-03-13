@@ -24,6 +24,8 @@ public static class TaskMappingConfig
             config.CreateMap<Task, TaskDto>()
                 .ForMember(dto => dto.Versions,
                     opt => opt.MapFrom(t => t.Versions))
+                .ForMember(dto => dto.Type,
+                    opt => opt.MapFrom(t => t.Type))
                 .ForMember(dto => dto.ThemeIds,
                     opt => opt.MapFrom(t => t.Themes.Select(th => th.Id)));
         });

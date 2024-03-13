@@ -8,7 +8,7 @@ public class TaskDto
     public bool IsEnabled { get; set; }
     public TaskComplexity Complexity { get; set; }
     public int AvgTimeInMin { get; set; }
-    public TaskType TaskType { get; set; }
+    public TaskType Type { get; set; }
     public int[] ThemeIds { get; set; } = null!;
     public VersionDto[] Versions { get; set; } = null!;
 }

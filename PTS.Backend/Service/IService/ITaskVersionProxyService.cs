@@ -4,7 +4,6 @@ using PTS.Contracts.Versions.Dto;
 namespace PTS.Backend.Service.IService;
 public interface ITaskVersionProxyService
 {
-    Task<TaskDto> CreateAsync(int taskId, CreateVersionRequest dto);
-    Task<TaskDto> EditAsync(int taskId, int versionId, EditVersionRequest dto);
-    Task<TaskDto> EditAsync(int taskId, EditVersionWithIdRequest dto);
+    Task<VersionForTestDto> GetAsync(int versionId);
+    Task<List<VersionForTestDto>> GetAllAsync(int versionId);
 }
