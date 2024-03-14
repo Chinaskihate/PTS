@@ -17,6 +17,6 @@ public class VersionForTestDto
     public string Description { get; set; } = string.Empty;
     public string? InputCondition { get; set; } = null;
     public string? OutputCondition { get; set; } = null;
-    [Required]
+    //[Required]
     public List<ThemeForTestDto> Themes { get; set; }
 }

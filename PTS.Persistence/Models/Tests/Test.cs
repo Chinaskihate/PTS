@@ -10,6 +10,8 @@ public class Test
     [Required]
     public string Name { get; set; }
     public string Description { get; set; }
+    [Required]
+    public bool IsEnabled { get; set; }
     public List<TestTaskVersion> TestTaskVersions { get; set; } = [];
     public List<TestResult> TestResults { get; set; }
 }

@@ -1,5 +1,4 @@
-﻿using PTS.Contracts.Versions.Dto;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PTS.Contracts.Tests.Dto;
 public class CreateTestRequest
@@ -11,5 +10,5 @@ public class CreateTestRequest
     [Required]
     public bool IsEnabled { get; set; }
     [Required]
-    public List<VersionForTestDto> Versions { get; set; } 
+    public List<VersionForCreateTestDto> Versions { get; set; } 
 }

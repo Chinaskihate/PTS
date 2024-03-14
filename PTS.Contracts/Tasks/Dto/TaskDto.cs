@@ -1,4 +1,5 @@
-﻿using PTS.Contracts.Versions.Dto;
+﻿using PTS.Contracts.Theme.Dto;
+using PTS.Contracts.Versions.Dto;
 
 namespace PTS.Contracts.Tasks.Dto;
 public class TaskDto
@@ -9,6 +10,6 @@ public class TaskDto
     public TaskComplexity Complexity { get; set; }
     public int AvgTimeInMin { get; set; }
     public TaskType Type { get; set; }
-    public int[] ThemeIds { get; set; } = null!;
-    public VersionDto[] Versions { get; set; } = null!;
+    public ThemeForTestDto[] Themes { get; set; } = null!;
+    public List<VersionDto> Versions { get; set; } = null!;
 }

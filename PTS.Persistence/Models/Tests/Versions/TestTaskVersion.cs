@@ -9,4 +9,6 @@ public class TestTaskVersion
     public Test Test { get; set; }
     [Required]
     public int TaskVersionId { get; set; }
+    [Required]
+    public int TaskId { get; set; }
 }

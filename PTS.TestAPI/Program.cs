@@ -1,4 +1,5 @@
 using PTS.Backend.Extensions;
+using PTS.Backend.Mappings;
 using PTS.Backend.Middlewares;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
@@ -22,10 +23,12 @@ try
         .ReadFrom.Configuration(ctx.Configuration));
 
     SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
+    SD.TaskAPIBase = builder.Configuration["ServiceUrls:TaskAPI"];
 
     // Add services to the container.
     builder.AddCorsPTS();
     builder.Services.AddTestDbContextFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
+    builder.Services.AddTestMapper();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
@@ -35,6 +38,8 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<ITaskVersionProxyService, TaskVersionProxyService>();
+    builder.Services.AddScoped<ITestService, TestService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);

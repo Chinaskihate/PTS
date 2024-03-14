@@ -10,6 +10,7 @@ public static class UserRoles
     public const string AnyAdmin = Admin + "," + RootAdmin;
     public const string ThemeManagerRoles = ThemeManager + "," + Admin + "," + RootAdmin + "," + TelegramBot;
     public const string TaskManagerRoles = TaskManager + "," + Admin + "," + RootAdmin;
+    public const string TestManagerRoles = TestManager + "," + Admin + "," + RootAdmin;
 
     public static string[] AllRoles => new[]
     {

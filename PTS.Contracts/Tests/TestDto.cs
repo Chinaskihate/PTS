@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PTS.Contracts.Versions.Dto;
 
 namespace PTS.Contracts.Test;
 public class TestDto
 {
-    [Required]
     public int Id { get; set; }
-    [Required]
+    public string Name { get; set; }
+    public string Description { get; set; }
     public bool IsEnabled { get; set; }
+    public List<VersionForTestDto> TaskVersions { get; set; }
 }
