@@ -9,7 +9,7 @@ public class TestResult
     [Required]
     public Test Test { get; set; }
     [Required]
-    public int StudentId { get; set; }
+    public string StudentId { get; set; }
     public DateTime? SubmissionTime { get; set; }
     public List<TaskResult> TaskResults { get; set; }
 }

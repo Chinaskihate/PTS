@@ -1,0 +1,6 @@
+@PTS.TestExecutionAPI_HostAddress = http://localhost:5242
+
+GET {{PTS.TestExecutionAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

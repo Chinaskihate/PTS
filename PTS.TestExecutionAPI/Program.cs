@@ -7,6 +7,7 @@ using PTS.Backend.Utils;
 using PTS.Persistence.Helpers;
 using Serilog;
 
+
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
@@ -60,8 +61,6 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
-
-    MigrationHelper.ApplyTestMigration(app.Services);
 
     app.Run();
 }
