@@ -8,4 +8,6 @@ public interface IThemeService
     Task<ThemeDto> EditThemeAsync(int themeId, EditThemeRequest request);
 
     Task<ThemeDto> GetThemes(bool availableOnly = false);
+
+    Task<ThemeDto> GetThemeWithParents(int childThemeId, bool availableOnly = false);
 }

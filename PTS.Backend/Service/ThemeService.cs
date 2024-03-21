@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Constants;
 using PTS.Contracts.Theme.Dto;
@@ -45,6 +46,24 @@ public class ThemeService(
     {
         using var context = _dbFactory.CreateDbContext();
         return await GetThemes(availableOnly, context);
+    }
+
+    public async Task<ThemeDto> GetThemeWithParents(int childThemeId, bool availableOnly = false)
+    {
+        using var context = _dbFactory.CreateDbContext();
+
+        Theme root = await context.Themes
+            .Include(t => t.Parent)
+            .FirstAsync(t => t.Id == childThemeId && (!availableOnly || !t.IsBanned));
+
+        while(root?.Parent != null)
+        {
+            root = await context.Themes
+                .Include(t => t.Parent)
+                .FirstOrDefaultAsync(t => t.Id == root.ParentId && (!availableOnly || !t.IsBanned));
+        }        
+
+        return _mapper.Map<ThemeDto>(root ?? throw new NotFoundException($"No available theme with {childThemeId}"));
     }
 
     private async Task<ThemeDto> GetThemes(bool availableOnly, TaskDbContext context)

@@ -50,32 +50,38 @@ public class TaskService(
     public async Task<TaskDto> EditAsync(int id, EditTaskRequest dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var themes = await context.Themes
-            .Where(th => dto.ThemeIds.Contains(th.Id))
-            .ToListAsync();
+        //var themes = await context.Themes
+        //    .Where(th => dto.ThemeIds.Contains(th.Id))
+        //    .ToListAsync();
 
         var task = await context.Tasks
-            .Include(t => t.Themes)
+            //.Include(t => t.Themes)
             .Include(t => t.Versions)
             .ThenInclude(v => v.TestCases)
             .FirstAsync(t => t.Id == id);
 
-        task.Themes = themes;
+        //task.Themes = themes;
         task.IsEnabled = dto.IsEnabled;
 
         await context.SaveChangesAsync();
 
         var result = _mapper.Map<TaskDto>(task);
-        foreach (var version in dto.NewVersions)
+        if(dto.NewVersions != null)
         {
-            result = await _taskVersionService.CreateAsync(task.Id, version);
+            foreach (var version in dto.NewVersions)
+            {
+                result = await _taskVersionService.CreateAsync(task.Id, version);
+            }
         }
 
-        foreach (var version in dto.EditedVersions)
+        if(dto.EditedVersions != null)
         {
-            result = await _taskVersionService.EditAsync(task.Id, version);
+            foreach (var version in dto.EditedVersions)
+            {
+                result = await _taskVersionService.EditAsync(task.Id, version);
+            }
         }
-
+        
         return result;
     }
 

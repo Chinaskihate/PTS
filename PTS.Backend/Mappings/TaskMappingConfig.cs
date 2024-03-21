@@ -25,7 +25,13 @@ public static class TaskMappingConfig
                 .ForMember(dto => dto.TestCases,
                     opt => opt.MapFrom(v => v.TestCases));
 
+            config.CreateMap<Theme, ThemeDto>()
+                .ForMember(dto => dto.SubThemes, opt => opt.MapFrom(t => t.Children));
             config.CreateMap<Theme, ThemeForTestDto>();
+
+            config.CreateMap<TaskVersion, VersionForTestDto>()
+                .ForMember(dto => dto.Themes,
+                    opt => opt.MapFrom(v => v.Task.Themes));
 
             config.CreateMap<Task, TaskDto>()
                 .ForMember(dto => dto.Versions,
