@@ -33,7 +33,7 @@ public class TaskVersionController(ITaskVersionService taskVersionService) : Con
     }
 
     [HttpPost("splitted")]
-    public async Task<IActionResult> GetAll(GetTasksRequestDto dto)
+    public async Task<IActionResult> GetAll(GetTaskVersionsRequestDto dto)
     {
         _response.Result = await _taskVersionService.GetAllAsync(dto);
         return Ok(_response);

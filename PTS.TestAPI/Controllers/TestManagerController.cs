@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Common;
+using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Tests.Dto;
 using PTS.Contracts.Users;
 
 namespace PTS.TestAPI.Controllers;
 
 [ApiController]
-[Route("api/task")]
+[Route("api/test")]
 [Authorize]
 public class TestManagerController(ITestService testService) : ControllerBase
 {
@@ -24,11 +25,10 @@ public class TestManagerController(ITestService testService) : ControllerBase
         return Ok(_response);
     }
 
-    [HttpGet]
-    [Authorize(Roles = UserRoles.TestManagerRoles)]
-    public async Task<IActionResult> GetAllAsync()
+    [HttpPost("filtered")]
+    public async Task<IActionResult> GetAllAsync(GetTestsRequestDto dto)
     {
-        _response.Result = await _testService.GetAllAsync();
+        _response.Result = await _testService.GetAllAsync(dto);
         return Ok(_response);
     }
 }

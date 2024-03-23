@@ -6,5 +6,5 @@ public interface ITestService
 {
     Task<TestDto> Create(CreateTestRequest dto);
     Task<TestDto> Get(int id);
-    Task<List<TestDto>> GetAllAsync();
+    Task<List<TestDto>> GetAllAsync(GetTestsRequestDto dto);
 }

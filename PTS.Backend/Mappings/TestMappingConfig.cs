@@ -31,11 +31,12 @@ public static class TestMappingConfig
     {
         public IEnumerable<VersionForTestDto> Convert(TaskDto source, IEnumerable<VersionForTestDto> destination, ResolutionContext context)
         {
-            /*first mapp from People, then from Team*/
+            /*first mapp from Versions, then from Task*/
             foreach (var model in source.Versions.Select
                     (e => context.Mapper.Map<VersionForTestDto>(e)))
             {
                 context.Mapper.Map(source, model);
+                model.Id = source.Versions.Single().Id;
                 yield return model;
             }
         }

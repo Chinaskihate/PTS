@@ -68,12 +68,23 @@ public class TestService(
         throw new NotImplementedException();
     }
 
-    public async Task<List<TestDto>> GetAllAsync()
+    public async Task<List<TestDto>> GetAllAsync(GetTestsRequestDto dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var tests = await context.Tests
+        var tests = context.Tests
             .Include(t => t.TestTaskVersions)
-            .ToListAsync();
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(dto.Name))
+        {
+            tests = tests.Where(t => t.Name.Contains(dto.Name));
+        }
+
+        var uploadedTests = await tests.ToListAsync();
+        if (dto.TaskCount != null)
+        {
+            uploadedTests = uploadedTests.Where(t => t.TestTaskVersions.Count == dto.TaskCount).ToList();
+        }
 
         var result = new List<TestDto>();
         foreach (var test in tests)
@@ -87,6 +98,20 @@ public class TestService(
             }
 
             mapped.TaskVersions = versions;
+        }
+
+        if (dto.ThemeIds != null)
+        {
+            var uploadedVersions = await _versionService.GetAllAsync(new Contracts.Tasks.Dto.GetTaskVersionsRequestDto
+            {
+                ThemeIds = dto.ThemeIds
+            });
+            var uploadedVersionsIds = uploadedVersions.Select(v => v.Id).ToHashSet();
+            result = result
+                .Where(t => t.TaskVersions
+                    .Any(v => uploadedVersionsIds
+                        .Contains(v.Id)))
+                .ToList();
         }
 
         return result;

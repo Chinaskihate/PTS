@@ -112,7 +112,7 @@ public class TaskVersionService(
         return result;
     }
 
-    public async Task<VersionForTestDto[]> GetAllAsync(GetTasksRequestDto dto)
+    public async Task<VersionForTestDto[]> GetAllAsync(GetTaskVersionsRequestDto dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var tasks = context.Tasks
@@ -162,6 +162,10 @@ public class TaskVersionService(
             .ThenInclude(t => t.Themes)
             .AsQueryable();
 
+        if (dto.TaskVersionIds != null)
+        {
+            versions = versions.Where(v => dto.TaskVersionIds.Contains(v.Id));
+        }
         versions = versions.Where(v => v.Task.IsEnabled && resultTaskIds.Contains(v.Task.Id));
         if (dto.ProgrammingLanguage != null)
         {
