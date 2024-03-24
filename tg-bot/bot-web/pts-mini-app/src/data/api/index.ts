@@ -18,6 +18,7 @@ const authInterceptor = function (config: any) {
     return config
 }
 
+$authHost.interceptors.request.use(authInterceptor)
 $themeApi.interceptors.request.use(authInterceptor)
 
 

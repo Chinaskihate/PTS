@@ -6,8 +6,8 @@ export const auth = async (telegramId: number) => {
     return {isAuth: isAuth, user: (user as User)}
 }
 
-export const signIn = async (email: string, password: string, telegramId: number) => {
-    const {isAuth, user} = await login(email, password, telegramId)
+export const signIn = async (email: string, password: string) => {
+    const {isAuth, user} = await login(email, password)
 
     return {isAuth: isAuth, user: (user as User)}
 }

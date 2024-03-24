@@ -73,9 +73,7 @@ const Authorization = observer(() => {
                                 variant="contained"
                                 sx={{mt: 4, mb: 2}}
                                 onClick={() => {
-                                    signIn(email,
-                                        password,
-                                        telegramData?.user?.id ?? 0)
+                                    signIn(email, password)
                                         .then(data => {
                                             if (data.isAuth)
                                                 setUser(data.user)

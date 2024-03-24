@@ -6,7 +6,7 @@ const history: TestResult[] = [
         tasks: [
             {
                 taskId: 1,
-                input: "hello world!",
+                input: "print(\"Hello, World!\")",
                 isCorrect: true,
                 submissionAt: new Date()
             },
