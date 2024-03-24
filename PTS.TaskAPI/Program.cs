@@ -37,6 +37,7 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<IThemeService, ThemeService>();
     builder.Services.AddScoped<ITaskService, TaskService>();
     builder.Services.AddScoped<ITaskVersionService, TaskVersionService>();
     builder.Services.AddScoped<ITestCaseService, TestCaseService>();

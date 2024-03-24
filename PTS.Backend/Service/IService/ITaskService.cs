@@ -6,4 +6,5 @@ public interface ITaskService
     Task<TaskDto> CreateAsync(CreateTaskRequestDto dto);
     Task<TaskDto> EditAsync(int id, EditTaskRequest dto);
     Task<TaskDto> GetAsync(int id);
+    Task<List<TaskDto>> GetAllAsync();
 }

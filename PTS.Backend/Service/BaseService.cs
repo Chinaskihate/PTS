@@ -61,6 +61,8 @@ public class BaseService(
                     return new() { IsSuccess = false, Message = "Access denied" };
                 case System.Net.HttpStatusCode.Unauthorized:
                     return new() { IsSuccess = false, Message = "Unauthorized" };
+                case System.Net.HttpStatusCode.MethodNotAllowed:
+                    return new() { IsSuccess = false, Message = "Method not found" };
                 case System.Net.HttpStatusCode.InternalServerError:
                     return new() { IsSuccess = false, Message = "Internal Server Error" };
                 default:

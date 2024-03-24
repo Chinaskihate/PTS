@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json;
+using PTS.Backend.Exceptions.Common;
+using PTS.Backend.Exceptions.TaskResult;
 using PTS.Contracts.Common;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +32,15 @@ internal class CustomExceptionHandlerMiddleware(RequestDelegate next)
         switch (exception)
         {
             case ValidationException:
+                code = HttpStatusCode.BadRequest;
+                break;
+            case BadRequestException:
+                code = HttpStatusCode.BadRequest;
+                break;
+            case NotFoundException:
+                code = HttpStatusCode.NotFound;
+                break;
+            case TaskAlreadySubmittedException:
                 code = HttpStatusCode.BadRequest;
                 break;
         }

@@ -37,6 +37,14 @@ public class ThemeController(IThemeService themeService) : ControllerBase
         return Ok(_response);
     }
 
+    [HttpGet("{id}")]
+    [Authorize(Roles = UserRoles.ThemeManagerRoles)]
+    public async Task<IActionResult> Get(int id)
+    {
+        _response.Result = await _themeService.GetThemeWithParents(id);
+        return Ok(_response);
+    }
+
     [HttpPost("{id:int}")]
     [Authorize(Roles = UserRoles.ThemeManagerRoles)]
     public async Task<IActionResult> Edit(int id, [FromBody] EditThemeRequest model)

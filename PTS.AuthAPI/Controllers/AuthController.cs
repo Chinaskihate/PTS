@@ -67,15 +67,9 @@ public class AuthController(
     [Authorize(Roles = UserRoles.AnyAdmin)]
     public async Task<IActionResult> RevokeToken(string id)
     {
-        var tokenRevoked = await _authService.RevokeTokenAsync(id);
-        if (!tokenRevoked)
-        {
-            _response.IsSuccess = false;
-            _response.Message = "user not found";
-            return NotFound(_response);
-        }
+        await _authService.RevokeTokenAsync(id);
 
-        _response.Result = tokenRevoked;
+        _response.Result = "token revoked";
         return Ok(_response);
     }
 

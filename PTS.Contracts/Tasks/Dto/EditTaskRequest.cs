@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PTS.Contracts.Versions.Dto;
 
 namespace PTS.Contracts.Tasks.Dto;
 public class EditTaskRequest
 {
-    [Required]
-    public int[] ThemeIds { get; set; } = [];
     public bool IsEnabled { get; set; }
+    public List<CreateVersionRequest>? NewVersions { get; set; }
+    public List<EditVersionWithIdRequest>? EditedVersions { get; set; }
 }

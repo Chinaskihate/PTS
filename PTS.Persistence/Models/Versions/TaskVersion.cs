@@ -16,4 +16,5 @@ public class TaskVersion
     [Required]
     public Task Task { get; set; } = null!;
     public List<TestCase> TestCases { get; set; } = [];
+    public string? CodeTemplate { get; set; }
 }

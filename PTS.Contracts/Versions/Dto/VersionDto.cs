@@ -10,4 +10,5 @@ public class VersionDto
     public string? InputCondition { get; set; } = null;
     public string? OutputCondition { get; set; } = null;
     public List<TestCaseDto> TestCases { get; set; } = [];
+    public CodeTemplateDto? CodeTemplate { get; set; }
 }

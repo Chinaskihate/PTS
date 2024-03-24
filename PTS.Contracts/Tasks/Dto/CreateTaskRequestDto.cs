@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PTS.Contracts.Versions.Dto;
+using System.ComponentModel.DataAnnotations;
 
 namespace PTS.Contracts.Tasks.Dto;
 public class CreateTaskRequestDto
 {
     [Required]
     public int[] ThemeIds { get; set; } = [];
-    [Required]
-    public ProgrammingLanguage ProgrammingLanguage { get; set; }
     [Required]
     public bool IsEnabled { get; set; }
     [Required]
@@ -16,9 +15,7 @@ public class CreateTaskRequestDto
     [Required]
     public string Name { get; set; } = string.Empty;
     [Required]
-    public string Description { get; set; } = string.Empty;
-    [Required]
     public int AvgTimeInMin { get; set; }
-    public string? InputCondition { get; set; }
-    public string? OutputCondition { get; set; }
+    [Required]
+    public List<CreateVersionRequest> Versions { get; set; }
 }

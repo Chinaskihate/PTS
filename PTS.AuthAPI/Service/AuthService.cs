@@ -108,9 +108,9 @@ public class AuthService(
         }
     }
 
-    public async Task<bool> RevokeTokenAsync(string userId)
+    public async Task RevokeTokenAsync(string userId)
     {
-        return string.IsNullOrWhiteSpace(userId) ? false : _tokenStorer.RemoveToken(userId);
+        _tokenStorer.RemoveToken(userId);
     }
 
     public async Task<LoginResponseDto> TelegramLoginAsync(string telegramId)
