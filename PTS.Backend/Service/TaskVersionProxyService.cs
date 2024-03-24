@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using PTS.Backend.Service.IService;
 using PTS.Backend.Utils;
+using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Versions.Dto;
 using System.Collections;
@@ -45,5 +46,23 @@ public class TaskVersionProxyService(
         var mapped = _mapper.Map<IEnumerable<VersionForTestDto>>(result);
 
         return mapped.First();
+    }
+
+    public async Task<List<VersionForTestResultDto>> GetFullAsync(GetTaskVersionsForTestResultRequestDto dto)
+    {
+        var response = await _baseService.SendAsync(new Contracts.Common.RequestDto
+        {
+            ApiType = Contracts.Common.ApiType.POST,
+            Url = SD.TaskAPIBase + "/api/task/full",
+            Data = dto
+        });
+        var result = new List<VersionForTestResultDto>();
+        foreach (var item in (IEnumerable)response.Result)
+        {
+            var serialized = JsonConvert.SerializeObject(item);
+            result.Add(JsonConvert.DeserializeObject<VersionForTestResultDto>(serialized));
+        }
+
+        return result;
     }
 }

@@ -1,4 +1,4 @@
-﻿using PTS.Contracts.TestResults;
+﻿using PTS.Contracts.PTSTestResults;
 
 namespace PTS.Backend.Service.IService;
 public interface ITestResultService

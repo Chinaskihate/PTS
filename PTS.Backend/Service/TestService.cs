@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PTS.Backend.Exceptions.Common;
@@ -63,9 +64,25 @@ public class TestService(
         return result;
     }
 
-    public Task<TestDto> Get(int id)
+    public async Task<TestDto> Get(int id)
     {
-        throw new NotImplementedException();
+        using var context = _dbContextFactory.CreateDbContext();
+        var test = await context.Tests
+            .Include(t => t.TestTaskVersions)
+            .FirstOrDefaultAsync(t => t.Id == id)
+            ?? throw new NotFoundException($"Test with {id} id not found");
+
+
+        var result = _mapper.Map<TestDto>(test);
+        var versions = new List<VersionForTestDto>();
+        foreach (var testTaskVersion in test.TestTaskVersions)
+        {
+            versions.Add(await _versionService.GetAsync(testTaskVersion.TaskId, testTaskVersion.TaskVersionId));
+        }
+
+        result.TaskVersions = versions;
+
+        return result;
     }
 
     public async Task<List<TestDto>> GetAllAsync(GetTestsRequestDto dto)

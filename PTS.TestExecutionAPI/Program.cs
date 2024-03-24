@@ -1,4 +1,4 @@
-using PTS.Backend.Extensions;
+ using PTS.Backend.Extensions;
 using PTS.Backend.Mappings;
 using PTS.Backend.Middlewares;
 using PTS.Backend.Service;
@@ -41,6 +41,7 @@ try
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<ITaskVersionProxyService, TaskVersionProxyService>();
     builder.Services.AddScoped<ITestService, TestService>();
+    builder.Services.AddScoped<ITestExecutionService, TestExecutionService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);

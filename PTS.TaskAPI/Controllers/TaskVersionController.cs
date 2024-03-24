@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Common;
 using PTS.Contracts.Tasks.Dto;
@@ -36,6 +37,13 @@ public class TaskVersionController(ITaskVersionService taskVersionService) : Con
     public async Task<IActionResult> GetAll(GetTaskVersionsRequestDto dto)
     {
         _response.Result = await _taskVersionService.GetAllAsync(dto);
+        return Ok(_response);
+    }
+
+    [HttpPost("full")]
+    public async Task<IActionResult> Get(GetTaskVersionsForTestResultRequestDto dto)
+    {
+        _response.Result = await _taskVersionService.GetAsync(dto);
         return Ok(_response);
     }
 }

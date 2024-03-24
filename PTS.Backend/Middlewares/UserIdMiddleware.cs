@@ -17,7 +17,7 @@ public class UserIdMiddleware(RequestDelegate next)
         if (userId != null)
         {
             // attach user to context on successful jwt validation
-            context.Items[Constants.UserIdHeader] = userId;
+            context.Request.Headers.Add(Constants.UserIdHeader, userId);
         }
 
         await _next(context);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Service.IService;
-using PTS.Contracts.TestResults;
+using PTS.Contracts.PTSTestResults;
 using PTS.Persistence.DbContexts;
 
 namespace PTS.Backend.Service;

@@ -1,9 +1,11 @@
 ﻿using PTS.Contracts.Test;
 
-namespace PTS.Contracts.TestResults;
+namespace PTS.Contracts.PTSTestResults;
 public class TestResultDto
 {
     public int Id { get; set; }
     public TestDto Test { get; set; }
     public string StudentId { get; set; }
+    public bool IsCompleted { get; set; }
+    public DateTime? SubmissionTime { get; set; }
 }

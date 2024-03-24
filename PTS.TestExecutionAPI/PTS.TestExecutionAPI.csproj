@@ -28,8 +28,4 @@
     <ProjectReference Include="..\PTS.Persistence\PTS.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

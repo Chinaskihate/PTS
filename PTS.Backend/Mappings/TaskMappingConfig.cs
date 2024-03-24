@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.TestCases.Dto;
@@ -40,6 +41,14 @@ public static class TaskMappingConfig
                     opt => opt.MapFrom(t => t.Versions))
                 .ForMember(dto => dto.Themes,
                     opt => opt.MapFrom(t => t.Themes));
+
+            config.CreateMap<TaskVersion, VersionForTestResultDto>()
+                .ForMember(dto => dto.Id,
+                    opt => opt.MapFrom(v => v.Id))
+                .ForMember(dto => dto.ProgrammingLanguage,
+                    opt => opt.MapFrom(v => v.ProgrammingLanguage))
+                .ForMember(dto => dto.Type,
+                    opt => opt.MapFrom(v => v.Task.Type));
         });
 
         return mappingConfig;

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Service.IService;
+using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Theme.Dto;
 using PTS.Contracts.Versions.Dto;
@@ -175,6 +176,18 @@ public class TaskVersionService(
         var uploadedVersions = versions.ToList();
 
         return _mapper.Map<VersionForTestDto[]>(uploadedVersions);
+    }
+
+    public async Task<VersionForTestResultDto[]> GetAsync(GetTaskVersionsForTestResultRequestDto dto)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var versions = await context.TaskVersions
+            .Include(v => v.Task)
+            .Include(v => v.TestCases)
+            .Where(v => dto.TaskVersionsIds.Contains(v.Id))
+            .ToListAsync();
+
+        return _mapper.Map<VersionForTestResultDto[]>(versions);
     }
 
     private bool IsRequestedTheme(ThemeDto dto, int[] allowedThemeIds)
