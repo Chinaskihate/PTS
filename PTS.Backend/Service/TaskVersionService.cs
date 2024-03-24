@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.PTSTestResults;
@@ -35,7 +36,8 @@ public class TaskVersionService(
             InputCondition = dto.InputCondition,
             OutputCondition = dto.OutputCondition,
             ProgrammingLanguage = (int)dto.ProgrammingLanguage,
-            Task = task
+            Task = task,
+            CodeTemplate = JsonConvert.SerializeObject(dto.CodeTemplate)
         };
 
         context.TaskVersions.Add(version);
@@ -65,6 +67,7 @@ public class TaskVersionService(
         version.Description = dto.Description;
         version.InputCondition = dto.InputCondition;
         version.OutputCondition = dto.OutputCondition;
+        version.CodeTemplate = JsonConvert.SerializeObject(dto.CodeTemplate);
 
         await context.SaveChangesAsync();
 
@@ -96,6 +99,7 @@ public class TaskVersionService(
         version.Description = dto.Description;
         version.InputCondition = dto.InputCondition;
         version.OutputCondition = dto.OutputCondition;
+        version.CodeTemplate = JsonConvert.SerializeObject(dto.CodeTemplate);
 
         await context.SaveChangesAsync();
 

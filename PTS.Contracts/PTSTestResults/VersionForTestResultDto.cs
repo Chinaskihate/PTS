@@ -1,5 +1,6 @@
 ﻿using PTS.Contracts.Tasks;
 using PTS.Contracts.TestCases.Dto;
+using PTS.Contracts.Versions.Dto;
 using System.ComponentModel.DataAnnotations;
 
 namespace PTS.Contracts.PTSTestResults;
@@ -15,4 +16,5 @@ public class VersionForTestResultDto
     public TaskType Type { get; set; }
     [Required]
     public TestCaseDto[] TestCases { get; set; }
+    public CodeTemplateDto? CodeTemplate { get; set; }
 }

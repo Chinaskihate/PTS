@@ -19,4 +19,5 @@ public class VersionForTestDto
     public string? OutputCondition { get; set; } = null;
     //[Required]
     public List<ThemeForTestDto> Themes { get; set; }
+    public CodeTemplateDto? CodeTemplate { get; set; }
 }

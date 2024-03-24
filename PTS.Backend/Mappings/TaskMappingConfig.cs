@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
@@ -14,6 +15,16 @@ using Task = PTS.Persistence.Models.Tasks.Task;
 namespace PTS.Backend.Mappings;
 public static class TaskMappingConfig
 {
+    public static CodeTemplateDto? MapCodeTemplate(string codeTemplate)
+    {
+        if (string.IsNullOrWhiteSpace(codeTemplate))
+        {
+            return null;
+        }
+
+        return JsonConvert.DeserializeObject<CodeTemplateDto>(codeTemplate);
+    }
+
     public static MapperConfiguration RegisterMaps()
     {
         var mappingConfig = new MapperConfiguration(config =>
@@ -24,7 +35,9 @@ public static class TaskMappingConfig
                 .ForMember(dto => dto.ProgrammingLanguage,
                     opt => opt.MapFrom(v => (ProgrammingLanguage)v.ProgrammingLanguage))
                 .ForMember(dto => dto.TestCases,
-                    opt => opt.MapFrom(v => v.TestCases));
+                    opt => opt.MapFrom(v => v.TestCases))
+                .ForMember(dto => dto.CodeTemplate,
+                    opt => opt.MapFrom(v => MapCodeTemplate(v.CodeTemplate)));
 
             config.CreateMap<Theme, ThemeDto>()
                 .ForMember(dto => dto.SubThemes, opt => opt.MapFrom(t => t.Children));
@@ -34,7 +47,9 @@ public static class TaskMappingConfig
                 .ForMember(dto => dto.Themes,
                     opt => opt.MapFrom(v => v.Task.Themes))
                 .ForMember(dto => dto.Id,
-                    opt => opt.MapFrom(v => v.Id));
+                    opt => opt.MapFrom(v => v.Id))
+                .ForMember(dto => dto.CodeTemplate,
+                    opt => opt.MapFrom(v => MapCodeTemplate(v.CodeTemplate)));
 
             config.CreateMap<Task, TaskDto>()
                 .ForMember(dto => dto.Versions,
@@ -48,7 +63,9 @@ public static class TaskMappingConfig
                 .ForMember(dto => dto.ProgrammingLanguage,
                     opt => opt.MapFrom(v => v.ProgrammingLanguage))
                 .ForMember(dto => dto.Type,
-                    opt => opt.MapFrom(v => v.Task.Type));
+                    opt => opt.MapFrom(v => v.Task.Type))
+                .ForMember(dto => dto.CodeTemplate,
+                    opt => opt.MapFrom(v => MapCodeTemplate(v.CodeTemplate)));
         });
 
         return mappingConfig;

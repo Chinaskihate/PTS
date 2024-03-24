@@ -12,4 +12,5 @@ public class EditVersionWithIdRequest
     public string? OutputCondition { get; set; }
     public List<CreateTestCaseRequest> NewTestCases { get; set; }
     public List<EditTestCaseWithIdRequest> EditedTestCases { get; set; }
+    public CodeTemplateDto? CodeTemplate { get; set; }
 }

@@ -9,4 +9,5 @@ public class CreateVersionRequest
     public string? InputCondition { get; set; }
     public string? OutputCondition { get; set;}
     public required List<CreateTestCaseRequest> TestCases { get; set; }
+    public CodeTemplateDto? CodeTemplate { get; set; }
 }
