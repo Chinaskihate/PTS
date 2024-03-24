@@ -30,6 +30,7 @@ public static class TaskMappingConfig
         var mappingConfig = new MapperConfiguration(config =>
         {
             config.CreateMap<TestCase, TestCaseDto>();
+            config.CreateMap<TestCase, TestCaseForStudentDto>();
 
             config.CreateMap<TaskVersion, VersionDto>()
                 .ForMember(dto => dto.ProgrammingLanguage,
@@ -46,6 +47,16 @@ public static class TaskMappingConfig
             config.CreateMap<TaskVersion, VersionForTestDto>()
                 .ForMember(dto => dto.Themes,
                     opt => opt.MapFrom(v => v.Task.Themes))
+                .ForMember(dto => dto.ProgrammingLanguage,
+                    opt => opt.MapFrom(v => v.ProgrammingLanguage))
+                .ForMember(dto => dto.Type,
+                    opt => opt.MapFrom(v => v.Task.Type))
+                .ForMember(dto => dto.Name,
+                    opt => opt.MapFrom(v => v.Task.Name))
+                .ForMember(dto => dto.Complexity,
+                    opt => opt.MapFrom(v => v.Task.Complexity))
+                .ForMember(dto => dto.AvgTimeInMin,
+                    opt => opt.MapFrom(v => v.Task.AvgTimeInMin))
                 .ForMember(dto => dto.Id,
                     opt => opt.MapFrom(v => v.Id))
                 .ForMember(dto => dto.CodeTemplate,

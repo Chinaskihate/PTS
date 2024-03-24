@@ -8,4 +8,6 @@ public class TestResultDto
     public string StudentId { get; set; }
     public bool IsCompleted { get; set; }
     public DateTime? SubmissionTime { get; set; }
+    public List<int>? CompletedTaskVersionIds { get; set; }
+    public List<int>? UncompletedTaskVersionIds { get; set; }
 }

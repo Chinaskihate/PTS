@@ -1,4 +1,5 @@
 ﻿using PTS.Contracts.Tasks;
+using PTS.Contracts.TestCases.Dto;
 using PTS.Contracts.Theme.Dto;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,11 +14,13 @@ public class VersionForTestDto
     public ProgrammingLanguage ProgrammingLanguage { get; set; }
     [Required]
     public TaskType Type { get; set; }
-    [Required]
-    public string Description { get; set; } = string.Empty;
+    public string? Name { get; set; }
+    public TaskComplexity? Complexity { get; set; }
+    public int? AvgTimeInMin { get; set; }
+    public string? Description { get; set; }
     public string? InputCondition { get; set; } = null;
     public string? OutputCondition { get; set; } = null;
-    //[Required]
     public List<ThemeForTestDto> Themes { get; set; }
     public CodeTemplateDto? CodeTemplate { get; set; }
+    public List<TestCaseForStudentDto>? TestCases { get; set; }
 }

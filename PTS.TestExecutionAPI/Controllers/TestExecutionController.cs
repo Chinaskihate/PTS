@@ -23,10 +23,17 @@ public class TestExecutionController(ITestExecutionService testExecutionService)
         return Ok(_response);
     }
 
-    [HttpGet()]
+    [HttpGet]
     public async Task<IActionResult> GetUserTests()
     {
         _response.Result = await _testExecutionService.GetUserTestsAsync(GetUserId());
+        return Ok(_response);
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetTestStatusAsync(int testResultId)
+    {
+        _response.Result = await _testExecutionService.GetTestStatusAsync(testResultId, GetUserId());
         return Ok(_response);
     }
 

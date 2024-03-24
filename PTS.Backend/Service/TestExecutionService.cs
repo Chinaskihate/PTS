@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Exceptions.TaskResult;
@@ -9,7 +10,6 @@ using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Results;
-using System.Reflection.Metadata;
 
 namespace PTS.Backend.Service;
 public class TestExecutionService(
@@ -23,21 +23,46 @@ public class TestExecutionService(
     private readonly ITestService _testService = testService;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<TestResultDto[]> GetUserTestsAsync(string userId)
+    public async Task<TestResultDto> GetTestStatusAsync(int testResultId, string userId)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var test = await context.TestResults
+            .Include(t => t.Test)
+            .ThenInclude(t => t.TestTaskVersions)
+            .FirstOrDefaultAsync(t => t.StudentId == userId)
+            ?? throw new NotFoundException($"TestResult with {testResultId} id not found");
+
+        var mappedTest = _mapper.Map<TestResultDto>(test);
+        (mappedTest.CompletedTaskVersionIds, mappedTest.UncompletedTaskVersionIds) = GetTestStatus(test);
+
+        return mappedTest;
+    }
+
+    public async Task<List<TestResultDto>> GetUserTestsAsync(string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var tests = await context.TestResults
             .Include(t => t.Test)
+            .ThenInclude(t => t.TestTaskVersions)
             .Where(t => t.StudentId == userId)
             .ToListAsync();
 
-        return _mapper.Map<TestResultDto[]>(tests);
+        var mappedTests = new List<TestResultDto>();
+        foreach (var test in tests)
+        {
+            var mappedTest = _mapper.Map<TestResultDto>(test);
+            (mappedTest.CompletedTaskVersionIds, mappedTest.UncompletedTaskVersionIds) = GetTestStatus(test);
+        }
+
+        return mappedTests;
     }
 
     public async Task<TestResultDto> StartTestAsync(StartTestDto dto, string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var test = await context.Tests.FirstOrDefaultAsync(t => t.Id == dto.TestId)
+        var test = await context.Tests
+            .Include(t => t.TestTaskVersions)
+            .FirstOrDefaultAsync(t => t.Id == dto.TestId)
             ?? throw new NotFoundException($"Test with {dto.TestId} id not found");
         var result = new TestResult()
         {
@@ -47,7 +72,9 @@ public class TestExecutionService(
         context.TestResults.Add(result);
         await context.SaveChangesAsync();
 
-        return _mapper.Map<TestResultDto>(result);
+        var mapped = _mapper.Map<TestResultDto>(result);
+        mapped.UncompletedTaskVersionIds = test.TestTaskVersions.Select(v => v.TaskVersionId).ToList();
+        return mapped;
     }
 
     public async Task<TestResultDto> SubmitTaskAsync(SubmitTaskDto dto, string userId)
@@ -133,5 +160,18 @@ public class TestExecutionService(
     {
         var testCase = version.TestCases.First(c => c.IsCorrect == true);
         return testCase.Output == dto.Answer.Trim();
+    }
+
+    private (List<int> CompletedTaskVersionIds, List<int> UncompletedTaskVersionIds) GetTestStatus(TestResult testResult)
+    {
+        var fullTaskVersionIds = testResult.Test.TestTaskVersions
+            .Select(v => v.TaskVersionId)
+            .Distinct()
+            .ToList();
+        var completedTaskVersionIds = testResult.TaskResults
+            .Select(r => r.TaskVersionId)
+            .Distinct()
+            .ToList();
+        return (completedTaskVersionIds, fullTaskVersionIds.Except(completedTaskVersionIds).ToList());
     }
 }

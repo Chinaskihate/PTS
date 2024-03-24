@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.PTSTestResults;
+using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Theme.Dto;
 using PTS.Contracts.Versions.Dto;
@@ -163,6 +164,7 @@ public class TaskVersionService(
         }
 
         var versions = context.TaskVersions
+            .Include(v => v.TestCases)
             .Include(v => v.Task)
             .ThenInclude(t => t.Themes)
             .AsQueryable();
@@ -178,6 +180,17 @@ public class TaskVersionService(
         }
 
         var uploadedVersions = versions.ToList();
+        foreach (var item in uploadedVersions)
+        {
+            if (item.Task.Type == TaskType.StringAnswer)
+            {
+                item.TestCases = null;
+            }
+            else if (item.Task.Type == TaskType.ExecutableCode)
+            {
+                item.TestCases = item.TestCases.Take(2).ToList();
+            }
+        }
 
         return _mapper.Map<VersionForTestDto[]>(uploadedVersions);
     }
