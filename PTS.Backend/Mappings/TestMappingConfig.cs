@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Test;
+using PTS.Contracts.TestCases.Dto;
 using PTS.Contracts.Versions.Dto;
 using PTS.Persistence.Models.Results;
 using PTS.Persistence.Models.Tests;
@@ -19,6 +20,7 @@ public static class TestMappingConfig
                 .ForMember(dto => dto.Themes, opt => opt.MapFrom(t => t.Themes));
             config.CreateMap<VersionDto, VersionForTestDto>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(t => t.Id));
+            config.CreateMap<TestCaseDto, TestCaseForStudentDto>();
             config.CreateMap<TaskDto, IEnumerable<VersionForTestDto>>()
                 .ConvertUsing<TaskToVersionForTestDtoConverter>();
             config.CreateMap<Test, TestDto>()
