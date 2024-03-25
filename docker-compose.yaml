@@ -34,7 +34,7 @@ services:
       context: .
       dockerfile: PTS.AuthAPI/Dockerfile
     environment:
-      - ASPNETCORE_URLS=https://+:7002
+      - ASPNETCORE_URLS=http://+:7002
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
@@ -51,7 +51,7 @@ services:
       context: .
       dockerfile: PTS.AdminAPI/Dockerfile
     environment:
-      - ASPNETCORE_URLS=https://+:7003
+      - ASPNETCORE_URLS=http://+:7003
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
@@ -69,7 +69,7 @@ services:
       context: .
       dockerfile: PTS.ThemeAPI/Dockerfile
     environment:
-      - ASPNETCORE_URLS=https://+:7004
+      - ASPNETCORE_URLS=http://+:7004
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
@@ -87,7 +87,7 @@ services:
       context: .
       dockerfile: PTS.TaskAPI/Dockerfile
     environment:
-      - ASPNETCORE_URLS=https://+:7005
+      - ASPNETCORE_URLS=http://+:7005
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
@@ -105,7 +105,7 @@ services:
       context: .
       dockerfile: PTS.TestAPI/Dockerfile
     environment:
-      - ASPNETCORE_URLS=https://+:7006
+      - ASPNETCORE_URLS=http://+:7006
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
@@ -123,7 +123,7 @@ services:
       context: .
       dockerfile: PTS.TestExecutionAPI/Dockerfile
     environment:
-      - ASPNETCORE_URLS=https://+:7007
+      - ASPNETCORE_URLS=http://+:7007
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
