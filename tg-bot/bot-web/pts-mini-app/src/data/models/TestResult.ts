@@ -32,15 +32,35 @@ export function getTestProgress(result: TestResult, test: Test) {
 
 
     for (let id of taskIds) {
-        const [task] = result.taskResults.filter(it => it.taskVersionId === id)
-        if (task === undefined) {
+        progress = Progress.InProgress
+        var taskResults = result.taskResults.filter(it => it.taskVersionId === id)
+
+        if (taskResults.length === 0) {
             progress = Progress.InProgress
-            break;
+            break
         }
 
-        if (!task.isCorrect) progress = Progress.Incorrect
+        let progressTask = Progress.Incorrect
+        for (let taskResult of taskResults) {
+            if (!taskResult.isCorrect && progressTask !== Progress.OK) {
+                progressTask = Progress.Incorrect
+            }
 
-        if (progress !== Progress.Incorrect) progress = Progress.OK
+            if (taskResult.isCorrect) {
+                progressTask = Progress.OK
+            }
+        }
+
+        if (progressTask === Progress.Incorrect) {
+            progress = Progress.Incorrect
+            continue
+        }
+
+        // @ts-ignore
+        if (progress !== Progress.Incorrect) {
+            progress = Progress.OK
+        }
+
     }
 
     return progress
@@ -49,11 +69,17 @@ export function getTestProgress(result: TestResult, test: Test) {
 export function getTaskProgress(result: TestResult, task: Task) {
     if (result === undefined || result.taskResults === undefined) return Progress.InProgress
 
-    const [taskResult] = result.taskResults.filter(it => it.taskVersionId === task.id)
+    let taskResults = result.taskResults.filter(it => it.taskVersionId === task.id)
+    let progressTask = Progress.InProgress
+    for (let taskResult of taskResults) {
+        if (!taskResult.isCorrect && progressTask !== Progress.OK) {
+            progressTask = Progress.Incorrect
+        }
 
-    if (taskResult === undefined) return Progress.InProgress
+        if (taskResult.isCorrect) {
+            progressTask = Progress.OK
+        }
+    }
 
-    if (!taskResult.isCorrect) return Progress.Incorrect;
-
-    return Progress.OK
+    return progressTask
 }

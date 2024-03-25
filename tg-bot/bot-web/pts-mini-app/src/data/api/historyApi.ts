@@ -115,3 +115,34 @@ export const getHistoryApi = async () => {
 
     return {history: history}
 }
+
+export const startTestApi = async (testId: number) => {
+    const history = (await getHistoryApi()).history.filter(it => it.test.id === testId)
+
+    if (history.length !== 0) {
+        console.log(JSON.stringify(history))
+        return history[0].id
+    }
+
+    const {data} = await $historyApi.post(process.env.REACT_APP_HISTORY_URL_START as string, {testId: testId})
+    let {result} = data
+    let historyNew = result as TestResult
+    console.log(JSON.stringify(historyNew))
+
+    return historyNew.id
+}
+
+export const sendTaskApi = async (testId: number, taskId: number, answer: string) => {
+    const resultId = await startTestApi(testId)
+
+    const {data} = await $historyApi.post(process.env.REACT_APP_HISTORY_URL_SUBMIT as string, {
+        testResultId: resultId,
+        taskVersionId: taskId,
+        answer: answer
+    })
+    let {result} = data
+    let historyNew = result as TestResult
+
+    return historyNew.id
+
+}

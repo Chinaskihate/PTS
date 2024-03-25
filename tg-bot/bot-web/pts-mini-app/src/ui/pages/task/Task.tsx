@@ -33,7 +33,7 @@ import {getTest} from "../../../domain/testHandler";
 import TaskBar from "./components/TaskBar";
 import {langs} from "@uiw/codemirror-extensions-langs";
 import {Progress, TaskResult} from "../../../data/models/TestResult";
-import {getHistory} from "../../../domain/historyHandler";
+import {getHistory, sendTask} from "../../../domain/historyHandler";
 import {useInitData} from "@tma.js/sdk-react";
 import {getProgressColor} from "../../utils/colorsPicker";
 
@@ -61,7 +61,6 @@ const TaskPage = observer(() => {
     const [taskInput, setTaskInput] = useState("")
     const navigate = useNavigate()
 
-    const telegramData = useInitData()
 
     useEffect(() => {
         setScreen(TASK_ROUTE_LESS_ID + testId + "/" + taskId)
@@ -153,7 +152,8 @@ const TaskPage = observer(() => {
                             {
                                 task.inputCondition !== null && (
                                     <Box>
-                                        <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h6"}>Входные данные</Typography>
+                                        <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h6"}>Входные
+                                            данные</Typography>
                                         <Typography align={"left"} variant={"body1"}>{task.inputCondition}</Typography>
                                     </Box>
                                 )
@@ -162,7 +162,8 @@ const TaskPage = observer(() => {
                             {
                                 task.outputCondition !== null && (
                                     <Box>
-                                        <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h6"}>Выходные данные</Typography>
+                                        <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h6"}>Выходные
+                                            данные</Typography>
                                         <Typography align={"left"} variant={"body1"}>{task.outputCondition}</Typography>
                                     </Box>
                                 )
@@ -251,7 +252,7 @@ const TaskPage = observer(() => {
                                     onChange={(value) => setTaskInput(value)}
                                 />
                             )}
-                            {task.typeEnum === TaskType.OneAnswer  && (
+                            {task.typeEnum === TaskType.OneAnswer && (
                                 <RadioGroup
                                     value={taskInput}
                                     onChange={(_, value) => setTaskInput(value)}>
@@ -293,7 +294,35 @@ const TaskPage = observer(() => {
                                 color="primary"
                                 sx={{mt: 4, mb: 2}}
                                 onClick={() => {
+                                    let answer = taskInput
 
+                                    if (task.typeEnum === TaskType.MultipleAnswer) {
+                                        try {
+                                            const json = JSON.parse(taskInput) as {
+                                                answers: string[]
+                                            }
+                                            answer = json.answers.join("&&&")
+                                        } catch (e) {
+                                            answer = taskInput
+                                        }
+                                    }
+                                    sendTask(test.id, task.id, answer).then(() =>
+                                        getHistory()
+                                            .then(data => {
+                                                if (testId === undefined || taskId === undefined) {
+                                                    navigate(HISTORY_ROUTE)
+                                                    return
+                                                }
+
+                                                const [testResult] = data.history.filter(result => result.test.id === +testId)
+                                                if (testResult === undefined || testResult.taskResults === undefined) {
+                                                    setTaskResults([])
+                                                    return
+                                                }
+
+                                                setTaskResults(testResult.taskResults.filter(it => it.taskVersionId === +taskId))
+                                            }).catch(error => alert(error)))
+                                        .catch(error => alert(error))
                                 }}
                             >
                                 Отправить
