@@ -149,6 +149,9 @@ services:
     depends_on:
       - db
       - admin-api
+    volumes:
+      - ./localhost.pfx:/https/localhost.pfx:ro
+      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
 volumes:
   db:
   pg-admin:
