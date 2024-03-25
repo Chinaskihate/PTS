@@ -15,7 +15,7 @@ import {
     Language,
     Test
 } from "../../../data/models/Test";
-import {getTests} from "../../../domain/testHandler";
+import {generateTest, getTests} from "../../../domain/testHandler";
 import {getThemes} from "../../../domain/themeHandler";
 import {Theme} from "../../../data/models/Theme";
 
@@ -90,7 +90,18 @@ const Main = observer(() => {
                 selectedDifficulties={searchDifficulties}
                 selectedThemes={searchThemes}
                 languages={Object.values(Language)}
-                selectedLanguages={searchLanguages}/>
+                selectedLanguages={searchLanguages}
+                onGenerate={() => {
+                    console.log(searchThemes)
+                    console.log(taskCountMax)
+                    generateTest(searchThemes, taskCountMax)
+                        .then(it => {
+                            navigate(TEST_ROUTE_LESS_ID + it.testId)
+                        })
+                        .catch(error => alert(error))
+                }
+                }
+            />
 
             <Container component="main" maxWidth="xs"
                        sx={{mt: `${topPadding + 10}px`, mb: 8, flexGrow: 1, alignItems: "start"}}>

@@ -1,5 +1,5 @@
 import {Difficult, getTestDifficulties, getTestLanguages, Language, Test, updateTest} from "../models/Test";
-import {$testApi} from "./index";
+import {$generateApi, $testApi} from "./index";
 import {Theme} from "../models/Theme";
 import {login} from "./authApi";
 import {cookie} from "../store";
@@ -282,4 +282,25 @@ export const getTestsByIdsApi = async (ids: number[]) => {
     }
 
     return {tests: tests}
+}
+
+export const generateTestApi = async (themes: Theme[], taskCount: number) => {
+    console.log(themes)
+    console.log(taskCount)
+    let userToken = cookie.get("token")
+    await login(process.env.REACT_APP_TG_BOT_EMAIL as string, process.env.REACT_APP_TG_BOT_PASSWORD as string)
+    let themeIds = themes.length !== 0 ? themes.map(it => it.id) as number[] : null
+
+    const {data} = await $generateApi.post(process.env.REACT_APP_GENERATOR_URL_GENERATE as string, {
+        taskCount: taskCount,
+        themeIds: themeIds
+    })
+
+    cookie.set("token", userToken)
+
+    console.log(data)
+
+    var {result} = data
+
+    return {testId: +result}
 }

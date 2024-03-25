@@ -1,5 +1,5 @@
 import React, {FC, RefObject, useState} from "react";
-import {AppBar, Autocomplete, Box, Chip, Drawer, IconButton, Stack, TextField, Toolbar} from "@mui/material";
+import {AppBar, Autocomplete, Box, Button, Chip, Drawer, IconButton, Stack, TextField, Toolbar} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {Search, SearchIconWrapper, StyledInputBase} from "./CustomSearch";
 import {getDifficultColor, getRandomColor} from "../../../utils/colorsPicker";
@@ -18,7 +18,8 @@ interface SearchProps {
     selectedDifficulties: string[]
     currentSearch: string,
     languages: string[],
-    selectedLanguages: string[]
+    selectedLanguages: string[],
+    onGenerate: () => void
 }
 
 
@@ -34,7 +35,8 @@ const SearchBar: FC<SearchProps> = ({
                                         selectedDifficulties,
                                         currentSearch,
                                         languages,
-                                        selectedLanguages
+                                        selectedLanguages,
+                                        onGenerate
                                     }) => {
     const [searchTerm, setSearchTerm] = useState(currentSearch)
 
@@ -184,6 +186,18 @@ const SearchBar: FC<SearchProps> = ({
                                 width: '100%',
                             }}
                         />
+
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            sx={{mt: 4, mb: 2}}
+                            onClick={() => {
+                                onGenerate()
+                            }}
+                        >
+                            Сгенерировать
+                        </Button>
                     </Stack>
                 </Box>
             </Drawer>

@@ -1,4 +1,4 @@
-import {getTestApi, getTestsApi, getTestsByIdsApi} from "../data/api/testApi";
+import {generateTestApi, getTestApi, getTestsApi, getTestsByIdsApi} from "../data/api/testApi";
 import {Difficult, Language} from "../data/models/Test";
 import {Theme} from "../data/models/Theme";
 
@@ -12,4 +12,8 @@ export const getTest = async (id: number) => {
 
 export const getTestsByIds = async (ids: number[]) => {
     return getTestsByIdsApi(ids)
+}
+
+export const generateTest = async (themes: Theme[], taskCount: number) => {
+    return generateTestApi(themes, taskCount)
 }

@@ -31,6 +31,12 @@ const $historyApi = axios.create(
     }
 )
 
+const $generateApi = axios.create(
+    {
+        baseURL: process.env.REACT_APP_GENERATOR_URL
+    }
+)
+
 const authInterceptor = function (config: any) {
     config.headers.authorization = `Bearer ${cookie.get('token')}`
     return config
@@ -41,8 +47,9 @@ $themeApi.interceptors.request.use(authInterceptor)
 $taskApi.interceptors.request.use(authInterceptor)
 $testApi.interceptors.request.use(authInterceptor)
 $historyApi.interceptors.request.use(authInterceptor)
+$generateApi.interceptors.request.use(authInterceptor)
 
 
 export {
-    $authHost, $themeApi, $testApi, $taskApi, $historyApi
+    $authHost, $themeApi, $testApi, $taskApi, $historyApi, $generateApi
 }
