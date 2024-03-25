@@ -34,9 +34,7 @@ public class TestExecutionService(
             .FirstOrDefaultAsync(t => t.StudentId == userId)
             ?? throw new NotFoundException($"TestResult with {testResultId} id not found");
 
-        var test = await _testService.Get(testResult.Test.Id);
         var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
-        mappedTestResult.Test = test;
         (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
 
         return mappedTestResult;
@@ -55,9 +53,7 @@ public class TestExecutionService(
         var mappedTestResults = new List<TestResultDto>();
         foreach (var testResult in testResults)
         {
-            var test = await _testService.Get(testResult.Test.Id);
             var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
-            mappedTestResult.Test = test;
             (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
             mappedTestResults.Add(mappedTestResult);
         }

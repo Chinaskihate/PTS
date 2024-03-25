@@ -31,7 +31,6 @@ public class TaskController(ITaskService taskService) : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    [Authorize(Roles = UserRoles.TaskManagerRoles)]
     public async Task<IActionResult> Get(int id)
     {
         _response.Result = await _taskService.GetAsync(id);

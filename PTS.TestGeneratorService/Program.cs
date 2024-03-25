@@ -28,12 +28,16 @@ try
     builder.Services.AddControllers();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddHttpClient();
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddHttpClient<IAuthService, AuthService>();
 
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IBaseService, BaseService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
-    
+    builder.Services.AddScoped<ITaskVersionProxyService, TaskVersionProxyService>();
+    builder.Services.AddScoped<ITestProxyService, TestProxyService>();
+    builder.Services.AddScoped<ITestGeneratorService, TestGeneratorService>();
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
 
@@ -48,6 +52,7 @@ try
 
     app.UseHttpsRedirection();
     app.UseMiddleware<CheckTokenMiddleware>();
+    app.UseExceptionHandlerPTS();
     app.UseAuthentication();
     app.UseAuthorization();
 

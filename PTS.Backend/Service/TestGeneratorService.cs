@@ -5,34 +5,59 @@ using PTS.Contracts.Versions.Dto;
 
 namespace PTS.Backend.Service;
 
-public class TestGeneratorService : ITestGeneratorService
+public class TestGeneratorService(ITaskVersionProxyService versionService, ITestProxyService testService)
+    : ITestGeneratorService
 {
+    private readonly ITaskVersionProxyService _versionService = versionService;
+    private readonly ITestProxyService _testService = testService;
+
     public async Task<long> GenerateTest(GenerateTestRequest dto)
     {
-        
-        return await Task.FromResult(0);
-    }
-    
-    private static List<VersionDto> GenerateTaskList(IEnumerable<TaskDto> allTasks, GenerateTestRequest request)
-    {
-        var filteredTasks = allTasks
-            .Where(task => task.IsEnabled
-                           && request.ProgrammingLanguage.Any(lang => task.Versions.Any(v => v.ProgrammingLanguage.ToString().Equals(lang, StringComparison.OrdinalIgnoreCase)))
-                           && request.ThemeIds.Intersect(task.ThemeIds).Any()
-                           && request.Difficult.Contains(task.Difficult))
-            .ToList();
+        var versions = await GetTasks(dto);
+        if (versions.Count == 0)
+        {
+            throw new ArgumentException("Cannot generate test");
+        }
 
+        var test = await _testService.Create(new CreateTestRequest
+        {
+            Name = "Generated test",
+            Description = "Generate test",
+            IsEnabled = true,
+            Versions = versions.Select(it => new VersionForCreateTestDto
+            {
+                TaskId = it.TaskId,
+                VersionId = it.Id
+            }).ToList()
+        });
+
+        return await Task.FromResult(test.Id);
+    }
+
+    private async Task<List<VersionForTestDto>> GetTasks(GenerateTestRequest filter)
+    {
+        var versions = await _versionService.GetAllAsync(new GetTaskVersionsRequestDto
+        {
+            ThemeIds = filter.ThemeIds,
+        });
+
+        var resultVersions = GenerateTaskList(versions, filter);
+
+        return resultVersions;
+    }
+
+    private static List<VersionForTestDto> GenerateTaskList(List<VersionForTestDto> filteredTasks,
+        GenerateTestRequest request)
+    {
         var tasksCount = filteredTasks.Count;
-        var testTime = request.Time ?? long.MaxValue;
-
-        var selectedTasks = Filter(filteredTasks, testTime, tasksCount);
-
-        return selectedTasks.SelectMany(task => task.Versions.Where(v => request.ProgrammingLanguage.Contains(v.ProgrammingLanguage.ToString()))).ToList();
+        var testTime = request.Time ?? int.MaxValue;
+        return filteredTasks.Take(Math.Min(1, request.TaskCount)).ToList();
     }
 
-    private static IEnumerable<TaskDto> Filter(IReadOnlyList<TaskDto> tasks, long testTime, int taskCount)
+    private static IEnumerable<VersionForTestDto> Filter(IReadOnlyList<VersionForTestDto> tasks, int testTime,
+        int taskCount)
     {
-        var dp = new long[taskCount + 1, testTime + 1];
+        var dp = new int[taskCount + 1, testTime + 1];
 
         for (var index = 0; index <= taskCount; index++)
         {
@@ -40,15 +65,18 @@ public class TestGeneratorService : ITestGeneratorService
             {
                 if (index == 0 || time == 0)
                     dp[index, time] = 0;
-                else if (tasks[index - 1].Time <= time)
-                    dp[index, time] = Math.Max(tasks[index - 1].Difficult + dp[index - 1, time - tasks[index - 1].Time], dp[index - 1, time]);
+                else if (tasks[index - 1].AvgTimeInMin <= time)
+                    dp[index, time] =
+                        Math.Max(
+                            (int)tasks[index - 1].Complexity! +
+                            dp[index - 1, time - (tasks[index - 1].AvgTimeInMin ?? 0)], dp[index - 1, time]);
                 else
                     dp[index, time] = dp[index - 1, time];
             }
         }
 
         var result = dp[taskCount, testTime];
-        var selectedTasks = new List<TaskDto>();
+        var selectedTasks = new List<VersionForTestDto>();
 
         for (var index = taskCount; index > 0 && result > 0; index--)
         {
@@ -56,8 +84,8 @@ public class TestGeneratorService : ITestGeneratorService
                 continue;
             selectedTasks.Add(tasks[index - 1]);
 
-            result -= tasks[index - 1].Difficult;
-            testTime -= tasks[index - 1].Time;
+            result -= (int)tasks[index - 1].Complexity!;
+            testTime -= tasks[index - 1].AvgTimeInMin ?? 0;
         }
 
         return selectedTasks;
