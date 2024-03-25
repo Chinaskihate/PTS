@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Exceptions.TaskResult;
@@ -10,6 +9,7 @@ using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Results;
+using Z.Expressions;
 
 namespace PTS.Backend.Service;
 public class TestExecutionService(
@@ -52,6 +52,7 @@ public class TestExecutionService(
         {
             var mappedTest = _mapper.Map<TestResultDto>(test);
             (mappedTest.CompletedTaskVersionIds, mappedTest.UncompletedTaskVersionIds) = GetTestStatus(test);
+            mappedTests.Add(mappedTest);
         }
 
         return mappedTests;
@@ -102,8 +103,8 @@ public class TestExecutionService(
             TaskVersionId = dto.TaskVersionId,
             TestResult = testResult
         };
-        context.TaskResults.Add(taskResult);
-        await context.SaveChangesAsync();
+        //context.TaskResults.Add(taskResult);
+        //await context.SaveChangesAsync();
 
         return _mapper.Map<TestResultDto>(testResult);
     }
@@ -158,8 +159,22 @@ public class TestExecutionService(
 
     private bool CheckExecutableCodeTask(VersionForTestResultDto version, SubmitTaskDto dto)
     {
-        var testCase = version.TestCases.First(c => c.IsCorrect == true);
-        return testCase.Output == dto.Answer.Trim();
+        var testCases = version.TestCases.Where(c => c.IsCorrect == true).ToList();
+        foreach (var testCase in testCases)
+        {
+            var data = new InputData
+            {
+                Values = testCase.Input.Split(' ').ToList()
+            };
+
+            var output = Eval.Execute<string>(dto.Answer, data);
+            if (output != testCase.Output)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private (List<int> CompletedTaskVersionIds, List<int> UncompletedTaskVersionIds) GetTestStatus(TestResult testResult)
@@ -169,9 +184,14 @@ public class TestExecutionService(
             .Distinct()
             .ToList();
         var completedTaskVersionIds = testResult.TaskResults
-            .Select(r => r.TaskVersionId)
+            ?.Select(r => r.TaskVersionId)
             .Distinct()
-            .ToList();
+            .ToList() ?? new List<int>();
         return (completedTaskVersionIds, fullTaskVersionIds.Except(completedTaskVersionIds).ToList());
+    }
+
+    private class InputData
+    {
+        public List<string> Values { get; set; }
     }
 }
