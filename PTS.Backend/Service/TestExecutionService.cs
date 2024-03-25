@@ -115,9 +115,7 @@ public class TestExecutionService(
         }
 
         await context.SaveChangesAsync();
-        var test = await _testService.Get(testResult.Test.Id);
         var mappedTest = _mapper.Map<TestResultDto>(testResult);
-        mappedTest.Test = test;
         mappedTest.CompletedTaskVersionIds = completedTaskVersionIds;
         mappedTest.UncompletedTaskVersionIds = uncompletedTaskVersionIds;
 
