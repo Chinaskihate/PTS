@@ -1,14 +1,10 @@
-import {
-    Difficult,
-    getTestDifficulties,
-    getTestLanguages,
-    getTestThemes,
-    Language,
-    TaskType,
-    Test
-} from "../models/Test";
+import {Difficult, getTestDifficulties, getTestLanguages, Language, Test, updateTest} from "../models/Test";
+import {$testApi} from "./index";
+import {Theme} from "../models/Theme";
+import {login} from "./authApi";
+import {cookie} from "../store";
 
-const tests: Test[] = [
+/*const tests: Test[] = [
     {
         id: 1,
         title: "Basic Programming Concepts",
@@ -236,34 +232,54 @@ const tests: Test[] = [
             }
         ]
     }
-];
+];*/
 
-export const getTestsApi = async (searchTitle: string, themes: string[], difficulties: Difficult[], languages: Language[]) => {
-    let result = tests
+export const getTestsApi = async (searchTitle: string, themes: Theme[], difficulties: Difficult[], languages: Language[], taskCount: number) => {
+    let userToken = cookie.get("token")
+    await login(process.env.REACT_APP_TG_BOT_EMAIL as string, process.env.REACT_APP_TG_BOT_PASSWORD as string)
+    let themeIds = themes.length !== 0 ? themes.map(it => it.id) as number[] : null
 
-    if (searchTitle !== "") {
-        result = result.filter(it => it.title.includes(searchTitle))
-    }
+    const {data} = await $testApi.post(process.env.REACT_APP_TEST_URL_FILTERED as string, {
+        name: searchTitle,
+        taskCount: taskCount,
+        themeIds: themeIds
+    })
+    cookie.set("token", userToken)
 
-    if (themes.length !== 0) {
-        result = result.filter(it => getTestThemes(it).some(theme => themes.includes(theme)))
-    }
+    let {result} = data
+    let tests = (result as Test[])
+    tests.forEach(it => updateTest(it))
 
     if (difficulties.length !== 0) {
-        result = result.filter(it => getTestDifficulties(it).some(difficult => difficulties.includes(difficult)))
+        tests = tests.filter(it => getTestDifficulties(it).some(difficult => difficulties.includes(difficult)))
     }
 
     if (languages.length !== 0) {
-        result = result.filter(it => getTestLanguages(it).some(language => languages.includes(language)))
+        tests = tests.filter(it => getTestLanguages(it).some(language => languages.includes(language)))
     }
+    console.log(tests)
 
-    return {tests: result}
+    return {tests: tests}
 }
 
-export const getTestApi = async (id: number)=> {
-    return {tests: tests.filter(it => it.id === id)}
+export const getTestApi = async (id: number) => {
+    let userToken = cookie.get("token")
+    await login(process.env.REACT_APP_TG_BOT_EMAIL as string, process.env.REACT_APP_TG_BOT_PASSWORD as string)
+    const {data} = await $testApi.get(id.toString())
+    cookie.set("token", userToken)
+
+    let {result} = data
+    let test = result as Test
+    updateTest(test)
+
+    return {test: test}
 }
 
 export const getTestsByIdsApi = async (ids: number[]) => {
-    return {tests: tests.filter(it => ids.includes(it.id))}
+    let tests = [] as Test[]
+    for (let id of ids) {
+        tests = [...tests, (await getTestApi(id)).test]
+    }
+
+    return {tests: tests}
 }

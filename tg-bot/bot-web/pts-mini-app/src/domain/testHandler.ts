@@ -1,13 +1,13 @@
 import {getTestApi, getTestsApi, getTestsByIdsApi} from "../data/api/testApi";
 import {Difficult, Language} from "../data/models/Test";
+import {Theme} from "../data/models/Theme";
 
-export const getTests = async (searchTitle: string, categories: string[], difficulties: Difficult[], languages: Language[]) => {
-    return getTestsApi(searchTitle, categories, difficulties, languages)
+export const getTests = async (searchTitle: string, themes: Theme[], difficulties: Difficult[], languages: Language[], taskCount: number) => {
+    return getTestsApi(searchTitle, themes, difficulties, languages, taskCount)
 }
 
 export const getTest = async (id: number) => {
-    const [test] = (await getTestApi(id)).tests
-    return {test: test}
+    return await getTestApi(id)
 }
 
 export const getTestsByIds = async (ids: number[]) => {

@@ -24,13 +24,13 @@ const History = observer(() => {
     }, []);
 
     useEffect(() => {
-        getHistory(telegramData?.user?.id ?? 0)
+        getHistory()
             .then(data => setTestResults(data.history))
             .catch(error => alert(error))
     }, []);
 
     useEffect(() => {
-        getTestsByIds(testResults.map(it => it.testId))
+        getTestsByIds(testResults.map(it => it.test.id))
             .then(data => setTests(data.tests))
             .catch(error => alert(error))
     }, [testResults]);
@@ -42,11 +42,11 @@ const History = observer(() => {
                 <Typography sx={{fontWeight: "bold"}} align={"left"}
                             variant={"h6"}>История</Typography>
                 {tests.map(it => (
-                    <TestInfo name={it.title} description={it.description}
+                    <TestInfo name={it.name} description={it.description}
                               languages={getTestLanguages(it)}
-                              themes={getTestThemes(it)}
+                              themes={getTestThemes(it).map(it => it.name)}
                               time={getTestTime(it)}
-                              progress={getTestProgress(testResults.filter(result => result.testId === it.id)[0], it)}
+                              progress={getTestProgress(testResults.filter(result => result.test.id === it.id)[0], it)}
                               difficulties={getTestDifficulties(it)}
                               onClick={() => navigate(TEST_ROUTE_LESS_ID + it.id)}/>
                 ))}

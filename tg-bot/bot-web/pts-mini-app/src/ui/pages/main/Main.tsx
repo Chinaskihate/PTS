@@ -17,18 +17,20 @@ import {
 } from "../../../data/models/Test";
 import {getTests} from "../../../domain/testHandler";
 import {getThemes} from "../../../domain/themeHandler";
+import {Theme} from "../../../data/models/Theme";
 
 
 const Main = observer(() => {
-    const {setScreen} = useContext(AppContext)
-    const [themes, setThemes] = useState([] as string[])
+    const {setScreen, isAuth} = useContext(AppContext)
+    const [themes, setThemes] = useState([] as Theme[])
     const [searchParam, setSearchParam] = useState("")
-    const [searchThemes, setSearchThemes] = useState([] as string[])
+    const [searchThemes, setSearchThemes] = useState([] as Theme[])
     const [searchDifficulties, setSearchDifficulties] = useState([] as Difficult[])
     const [searchLanguages, setSearchLanguages] = useState([] as Language[])
     const [searchTests, setSearchTests] = useState([] as Test[])
     const navigate = useNavigate()
     const appBarRef = useRef<HTMLDivElement>(null)
+    const taskCountMax = 100
 
     const [topPadding, setTopPadding] = useState(0)
 
@@ -43,17 +45,23 @@ const Main = observer(() => {
     }, []);
 
     useEffect(() => {
-        getThemes().then(data => setThemes(data.themes))
+        if (!isAuth) return
+
+        getThemes().then(data => setThemes(data.themes)).catch(error => alert(error))
     }, [])
 
     useEffect(() => {
+        if (!isAuth) return
+
         getTests(
             searchParam,
             searchThemes,
             searchDifficulties,
-            searchLanguages
+            searchLanguages,
+            taskCountMax
         )
             .then(data => setSearchTests(data.tests))
+            .then()
             .catch(error => alert(error))
     }, [searchParam, searchThemes, searchDifficulties, searchLanguages]);
 
@@ -88,13 +96,16 @@ const Main = observer(() => {
                        sx={{mt: `${topPadding + 10}px`, mb: 8, flexGrow: 1, alignItems: "start"}}>
                 <CssBaseline/>
                 <Stack spacing={1}>
-                    {searchTests.map(it => (
-                        <TestInfo name={it.title} description={it.description}
-                                  languages={getTestLanguages(it)}
-                                  themes={getTestThemes(it)} time={getTestTime(it)} createdAt={new Date()}
-                                  difficulties={getTestDifficulties(it)}
-                                  onClick={() => navigate(TEST_ROUTE_LESS_ID + it.id)}/>
-                    ))}
+                    {searchTests.map((it => (
+                        <TestInfo
+                            name={it.name}
+                            description={it.description}
+                            languages={getTestLanguages(it)}
+                            themes={getTestThemes(it).map(it => it.name)}
+                            time={getTestTime(it)}
+                            difficulties={getTestDifficulties(it)}
+                            onClick={() => navigate(TEST_ROUTE_LESS_ID + it.id)}/>
+                    )))}
                 </Stack>
             </Container>
         </>

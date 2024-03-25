@@ -8,18 +8,15 @@ export const authorization = async (telegramId: number) => {
 
     const {result, isSuccess} = data
     cookie.set("token", result?.token)
-    console.log(JSON.stringify(data))
 
     return {isAuth: isSuccess && result?.user !== null, user: {email: result?.user?.email, telegramId: result?.user?.telegramId}}
 }
 
 export const login = async (email: string, password: string) => {
-    console.log(cookie.get("token"))
     const {data} = await $authHost.post(process.env.REACT_APP_AUTH_LOGIN as string, {userName: email, password: password})
 
     const {result, isSuccess} = data
     cookie.set("token", result?.token)
-    console.log(JSON.stringify(data))
 
     return {isAuth: isSuccess && result?.user !== null, user: {email: result?.user?.email, telegramId: result?.user?.telegramId}}
 }

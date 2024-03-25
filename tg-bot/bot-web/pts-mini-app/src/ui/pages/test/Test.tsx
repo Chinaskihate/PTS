@@ -38,13 +38,14 @@ const TestPage = observer(() => {
                     navigate(HISTORY_ROUTE)
                     return
                 }
+
                 setTest(data.test)
                 setLoading(false)
             })
             .catch(error => alert(error))
 
-        getHistory(telegramData?.user?.id ?? 0)
-            .then(data => setTestResult(data.history.filter(result => result.testId === +id)[0]))
+        getHistory()
+            .then(data => setTestResult(data.history.filter(result => result.test.id === +id)[0]))
             .catch(error => alert(error))
     }, [id]);
 
@@ -58,7 +59,7 @@ const TestPage = observer(() => {
                     <Divider flexItem/>
                     <Box>
                         <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h5"}>Название</Typography>
-                        <Typography align={"left"} variant={"h6"}>{test.title}</Typography>
+                        <Typography align={"left"} variant={"h6"}>{test.name}</Typography>
                     </Box>
                     <Divider flexItem/>
                     <Box>
@@ -67,13 +68,13 @@ const TestPage = observer(() => {
                     </Box>
                     <Divider flexItem/>
                     <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h5"}>Задания</Typography>
-                    {test.tasks.map(it => (
-                        <TaskInfo name={it.title}
+                    {test.taskVersions.map(it => (
+                        <TaskInfo name={it.name}
                                   description={it.description}
                                   time={it.time}
                                   difficult={it.difficult}
                                   language={it.language}
-                                  themes={it.themes}
+                                  themes={it.themes.map(it => it.name)}
                                   progress={getTaskProgress(testResult, it)}
                                   onClick={() => navigate(TASK_ROUTE_LESS_ID + id + "/" + it.id)}/>
                     ))}

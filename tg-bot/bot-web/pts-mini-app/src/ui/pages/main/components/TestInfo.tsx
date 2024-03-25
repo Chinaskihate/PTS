@@ -12,23 +12,28 @@ interface TestProps {
     languages: string[],
     themes: string[],
     time: number,
-    createdAt: Date,
     difficulties: string[]
     onClick: () => void
 }
 
 
-const TestInfo: FC<TestProps> = ({name, description, languages, themes, time, createdAt, difficulties, onClick}) => {
+const TestInfo: FC<TestProps> = ({name, description, languages, themes, time, difficulties, onClick}) => {
 
+    console.log(languages)
     return (
         <ButtonBase>
             <Container sx={{borderRadius: "5px", boxShadow: 1, paddingY: 1}} onClick={onClick}>
                 <Stack spacing={1}>
-                    <Stack direction={"row"} spacing={1} sx={{alignItems: "center", overflow: "auto", scrollbarWidth: "none"}}>
+                    <Stack direction={"row"} spacing={1}
+                           sx={{alignItems: "center", overflow: "auto", scrollbarWidth: "none"}}>
                         <Typography variant={"body1"} fontWeight={"bold"} noWrap>{name.slice(0, 25)}</Typography>
                         {
                             difficulties.map((it, _) => (
-                                <Chip sx={{backgroundColor: getDifficultColor(it as Difficult), color: "white", minWidth: "60px"}}
+                                <Chip sx={{
+                                    backgroundColor: getDifficultColor(it as Difficult),
+                                    color: "white",
+                                    minWidth: "60px"
+                                }}
                                       label={it} size={"small"}/>
                             ))
                         }
@@ -46,20 +51,27 @@ const TestInfo: FC<TestProps> = ({name, description, languages, themes, time, cr
                     </Stack>
                     <Divider/>
 
-                    <Stack direction={"row"} spacing={1}
-                           sx={{alignItems: "center", overflow: "auto", scrollbarWidth: "none"}}>
-                        {
-                            languages.map((it, index) => (
-                                <Chip sx={{
-                                    minWidth: "60px", backgroundColor: getRandomColor(index), color: "white"
-                                }}
-                                      label={it} size={"small"} variant={"outlined"}
-                                />
-                            ))
-                        }
-                    </Stack>
+                    {
+                        languages.length !== 0 && (
+                            <>
+                                <Stack direction={"row"} spacing={1}
+                                       sx={{alignItems: "center", overflow: "auto", scrollbarWidth: "none"}}>
+                                    {
+                                        languages.map((it, index) => (
+                                            <Chip sx={{
+                                                minWidth: "60px", backgroundColor: getRandomColor(index), color: "white"
+                                            }}
+                                                  label={it} size={"small"} variant={"outlined"}
+                                            />
+                                        ))
+                                    }
+                                </Stack>
 
-                    <Divider/>
+                                <Divider/>
+                            </>
+                        )
+                    }
+
 
                     <Stack direction={"row"} spacing={1}
                            sx={{alignItems: "center", overflow: "auto", scrollbarWidth: "none"}}>
@@ -95,7 +107,7 @@ const TestInfo: FC<TestProps> = ({name, description, languages, themes, time, cr
                             WebkitBoxOrient: 'vertical',
                             WebkitLineClamp: 2,
                             color: "gray"
-                        }}>{createdAt.toLocaleDateString()}</Typography>
+                        }}></Typography>
                     </Stack>
 
                 </Stack>

@@ -4,15 +4,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import {Search, SearchIconWrapper, StyledInputBase} from "./CustomSearch";
 import {getDifficultColor, getRandomColor} from "../../../utils/colorsPicker";
 import {Difficult} from "../../../../data/models/Test";
+import {Theme} from "../../../../data/models/Theme";
 
 interface SearchProps {
     appBarRef: RefObject<HTMLDivElement>,
     onSearchTitle: (value: string) => void
-    onSearchThemes: (value: string[]) => void
+    onSearchThemes: (value: Theme[]) => void
     onSearchDifficulties: (value: string[]) => void
     onSearchLanguages: (value: string[]) => void
-    themes: string[]
-    selectedThemes: string[]
+    themes: Theme[]
+    selectedThemes: Theme[]
     difficulties: string[]
     selectedDifficulties: string[]
     currentSearch: string,
@@ -90,14 +91,14 @@ const SearchBar: FC<SearchProps> = ({
                             id="themes"
                             options={themes}
                             defaultValue={selectedThemes}
-                            getOptionLabel={it => it}
+                            getOptionLabel={it => it.name}
                             renderInput={(params) => (
                                 <TextField {...params} placeholder="Темы"/>
                             )}
                             renderTags={(tagValue, getTagProps) =>
                                 tagValue.map((option, index) => (
                                     <Chip
-                                        label={option}
+                                        label={option.name}
                                         {...getTagProps({index})}
                                         variant="outlined"
                                         sx={{

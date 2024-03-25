@@ -45,9 +45,14 @@ const TaskInfo: FC<TaskProps> = ({name, description, language, progress, themes,
 
                     <Stack direction={"row"} spacing={1}
                            sx={{alignItems: "center", overflow: "auto", scrollbarWidth: "none"}}>
-                        <Chip sx={{minWidth: "60px", backgroundColor: "blue", color: "white"}}
-                              label={language} size={"small"} variant={"outlined"}
-                        />
+                        {
+                            language !== undefined && (
+                                <Chip sx={{minWidth: "60px", backgroundColor: "blue", color: "white"}}
+                                      label={language} size={"small"} variant={"outlined"}
+                                />
+                            )
+                        }
+
 
                         {
                             themes.map((it, index) => (

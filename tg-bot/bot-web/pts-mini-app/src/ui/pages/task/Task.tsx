@@ -39,13 +39,10 @@ import {getProgressColor} from "../../utils/colorsPicker";
 
 function getLanguageExtensions(lang: Language) {
     switch (lang) {
-        case Language.Java:
-            return langs.java();
-        case Language.Python:
+        case Language.Python_3_1:
             return langs.python();
-        case Language.Kotlin:
-            return langs.kotlin();
-        case Language.Csharp:
+        case Language.CsharpV10:
+        case Language.CsharpV9:
             return langs.csharp();
         default:
             return langs.c();
@@ -81,26 +78,27 @@ const TaskPage = observer(() => {
         }
 
         getTest(+testId).then(data => {
-            if (data.test === undefined || data.test.tasks === undefined || data.test.tasks.filter(it => it.id === +taskId).length === 0) {
+            if (data.test === undefined || data.test.taskVersions === undefined || data.test.taskVersions.filter(it => it.id === +taskId).length === 0) {
                 navigate(HISTORY_ROUTE)
                 return
             }
-            const [task] = data.test.tasks.filter(it => it.id === +taskId)
+            const [task] = data.test.taskVersions.filter(it => it.id === +taskId)
             setTest(data.test)
             setTask(task)
+            console.log(task)
 
             setLoading(false)
         }).catch(error => alert(error))
 
-        getHistory(telegramData?.user?.id ?? 0)
+        getHistory()
             .then(data => {
-                const [testResult] = data.history.filter(result => result.testId === +testId)
-                if (testResult === undefined || testResult.tasks === undefined) {
+                const [testResult] = data.history.filter(result => result.test.id === +testId)
+                if (testResult === undefined || testResult.taskResults === undefined) {
                     setTaskResults([])
                     return
                 }
 
-                setTaskResults(testResult.tasks.filter(it => it.taskId === +taskId))
+                setTaskResults(testResult.taskResults.filter(it => it.taskVersionId === +taskId))
             }).catch(error => alert(error))
     }, [taskId, testId]);
 
@@ -129,8 +127,8 @@ const TaskPage = observer(() => {
                 <>
                     <TaskBar
                         appBarRef={appBarRef}
-                        title={task.title}
-                        items={test.tasks.map(it => ({name: it.title, id: it.id}))}
+                        title={task.name}
+                        items={test.taskVersions.map(it => ({name: it.name, id: it.id}))}
                         onNavClick={(navTaskId) => {
                             navigate(TASK_ROUTE_LESS_ID + testId + "/" + navTaskId)
                         }}
@@ -151,25 +149,33 @@ const TaskPage = observer(() => {
                                 <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h6"}>Условие</Typography>
                                 <Typography align={"left"} variant={"body1"}>{task.description}</Typography>
                             </Box>
-                            {task.specificDescription !== "" && (
-                                <>
-                                    <Divider flexItem/>
+
+                            {
+                                task.inputCondition !== null && (
                                     <Box>
-                                        <Typography sx={{fontWeight: "bold"}} align={"left"}
-                                                    variant={"h6"}>Дополнительно</Typography>
-                                        <Typography align={"left"}
-                                                    variant={"body1"}>{task.specificDescription}</Typography>
+                                        <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h6"}>Входные данные</Typography>
+                                        <Typography align={"left"} variant={"body1"}>{task.inputCondition}</Typography>
                                     </Box>
-                                </>
-                            )}
-                            {task.type === TaskType.Code && (
+                                )
+                            }
+
+                            {
+                                task.outputCondition !== null && (
+                                    <Box>
+                                        <Typography sx={{fontWeight: "bold"}} align={"left"} variant={"h6"}>Выходные данные</Typography>
+                                        <Typography align={"left"} variant={"body1"}>{task.outputCondition}</Typography>
+                                    </Box>
+                                )
+                            }
+
+                            {task.typeEnum === TaskType.Code && (
                                 <>
                                     <Divider flexItem/>
                                     <Box>
                                         <Typography sx={{fontWeight: "bold", mb: 2}} align={"left"}
                                                     variant={"h6"}>Примеры</Typography>
                                         <Stack>
-                                            {task.testCases.filter(it => it.visible).map(it => (
+                                            {task.testCases.map(it => (
                                                 <Grid container sx={{mb: 1}}>
                                                     <Grid xs={6}>
                                                         <Stack spacing={1} divider={<Divider/>}>
@@ -212,13 +218,17 @@ const TaskPage = observer(() => {
                                     </IconButton>
                                 </Stack>
 
-                                <Chip sx={{minWidth: "60px", borderColor: "gray", color: "gray"}}
-                                      label={task.language} size={"small"} variant={"outlined"}
-                                />
+                                {
+                                    task.language !== undefined && (
+                                        <Chip sx={{minWidth: "60px", borderColor: "gray", color: "gray"}}
+                                              label={task.language} size={"small"} variant={"outlined"}
+                                        />
+                                    )
+                                }
                             </Stack>
 
 
-                            {task.type === TaskType.Text && (
+                            {task.typeEnum === TaskType.Text && (
                                 <TextField
                                     margin="normal"
                                     fullWidth
@@ -232,7 +242,7 @@ const TaskPage = observer(() => {
                                     }}
                                 />
                             )}
-                            {task.type === TaskType.Code && (
+                            {task.typeEnum === TaskType.Code && (
                                 <CodeMirror
                                     height={"30vh"}
                                     value={taskInput}
@@ -241,20 +251,20 @@ const TaskPage = observer(() => {
                                     onChange={(value) => setTaskInput(value)}
                                 />
                             )}
-                            {task.type === TaskType.OneAnswer && task.testCases.length === 1 && (
+                            {task.typeEnum === TaskType.OneAnswer  && (
                                 <RadioGroup
                                     value={taskInput}
                                     onChange={(_, value) => setTaskInput(value)}>
                                     {
-                                        (JSON.parse(task.testCases[0].input) as { answers: string[] }).answers.map(it =>
-                                            <FormControlLabel value={it} control={<Radio/>} label={it}/>)
+                                        (task.testCases.map(it => it.output).map(it =>
+                                            <FormControlLabel value={it} control={<Radio/>} label={it}/>))
                                     }
                                 </RadioGroup>
                             )}
-                            {task.type === TaskType.MultipleAnswer && task.testCases.length === 1 && (
+                            {task.typeEnum === TaskType.MultipleAnswer && (
                                 <FormGroup>
                                     {
-                                        (JSON.parse(task.testCases[0].input) as { answers: string[] }).answers.map(it =>
+                                        task.testCases.map(it => it.output).map(it =>
                                             <FormControlLabel label={it} control={<Checkbox defaultChecked={false}/>}
                                                               onChange={(_, value) => {
                                                                   try {
@@ -314,11 +324,11 @@ const TaskPage = observer(() => {
                                         </Stack>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        {task.type !== TaskType.Code && (
+                                        {task.typeEnum !== TaskType.Code && (
                                             <Typography sx={{fontWeight: "bold", mb: 2}} align={"left"}
                                                         variant={"h6"}>{it.input}</Typography>
                                         )}
-                                        {task.type === TaskType.Code && (
+                                        {task.typeEnum === TaskType.Code && (
                                             <CodeMirror
                                                 height={"30vh"}
                                                 value={it.input}

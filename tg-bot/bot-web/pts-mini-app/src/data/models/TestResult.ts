@@ -3,25 +3,36 @@ import {Task, Test} from "./Test";
 export enum Progress {OK = "Ок", Incorrect = "Неверно", InProgress = "В процессе" }
 
 export interface TestResult {
-    testId: number
-    tasks: TaskResult[]
+    id: number
+    test: TestInfo
+    taskResults: TaskResult[]
+}
+
+export interface TestInfo {
+    id: number,
+    name: string,
+    description: string,
+    isEnabled: boolean
 }
 
 export interface TaskResult {
-    taskId: number
+    id: number
+    taskVersionId: number
     input: string
     isCorrect: boolean
-    submissionAt: Date
 }
 
 export function getTestProgress(result: TestResult, test: Test) {
-    if (result === undefined || result.tasks === undefined) return Progress.InProgress
+    console.log(result)
+    console.log(test)
+    if (result === undefined || result.taskResults === undefined) return Progress.InProgress
 
-    const taskIds = Array.from(new Set(test.tasks.map(it => it.id)))
+    const taskIds = Array.from(new Set(test.taskVersions.map(it => it.id)))
     let progress = Progress.InProgress
 
+
     for (let id of taskIds) {
-        const [task] = result.tasks.filter(it => it.taskId === id)
+        const [task] = result.taskResults.filter(it => it.taskVersionId === id)
         if (task === undefined) {
             progress = Progress.InProgress
             break;
@@ -36,9 +47,9 @@ export function getTestProgress(result: TestResult, test: Test) {
 }
 
 export function getTaskProgress(result: TestResult, task: Task) {
-    if (result === undefined || result.tasks === undefined) return Progress.InProgress
+    if (result === undefined || result.taskResults === undefined) return Progress.InProgress
 
-    const [taskResult] = result.tasks.filter(it => it.taskId === task.id)
+    const [taskResult] = result.taskResults.filter(it => it.taskVersionId === task.id)
 
     if (taskResult === undefined) return Progress.InProgress
 
