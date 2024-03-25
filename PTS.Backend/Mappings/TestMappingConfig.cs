@@ -26,9 +26,12 @@ public static class TestMappingConfig
                 .ConvertUsing<TaskToVersionForTestDtoConverter>();
             config.CreateMap<Test, TestDto>()
                 .ForMember(dto => dto.TaskVersions, opt => opt.Ignore());
+            config.CreateMap<TaskResult, TaskResultDto>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(t => t.Id));
             config.CreateMap<TestResult, TestResultDto>()
                 .ForMember(dto => dto.Test, opt => opt.MapFrom(tr => tr.Test))
-                .ForMember(dto => dto.IsCompleted, opt => opt.MapFrom(tr => tr.SubmissionTime != null));
+                .ForMember(dto => dto.IsCompleted, opt => opt.MapFrom(tr => tr.SubmissionTime != null))
+                .ForMember(dto => dto.TaskResults, opt => opt.MapFrom(tr => tr.TaskResults));
             config.CreateMap<TestResult, TestStatisticsDto>()
                 .ForMember(dto => dto.Test, opt => opt.MapFrom(tr => tr.Test));
         });

@@ -102,7 +102,7 @@ public class TestExecutionService(
         var version = taskVersions.FirstOrDefault(v => v.Id == dto.TaskVersionId)
             ?? throw new NotFoundException($"Version with {dto.TaskVersionId} not found");
 
-        var isCorrect = CheckAnswer(testResult, version, dto);
+        var isCorrect = CheckAnswer(version, dto);
         var taskResult = new TaskResult
         {
             Input = dto.Answer,
@@ -128,14 +128,8 @@ public class TestExecutionService(
         return mappedTest;
     }
 
-    private bool CheckAnswer(TestResult testResult, VersionForTestResultDto version, SubmitTaskDto dto)
+    private bool CheckAnswer(VersionForTestResultDto version, SubmitTaskDto dto)
     {
-        if (version.Type != TaskType.ExecutableCode
-            && testResult.TaskResults.Any(r => r.TaskVersionId == dto.TaskVersionId))
-        {
-            throw new TaskAlreadySubmittedException("Task already submitted");
-        }
-
         switch (version.Type)
         {
             case TaskType.SingleChoice:

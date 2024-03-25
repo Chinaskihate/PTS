@@ -31,4 +31,11 @@ public class TestManagerController(ITestService testService) : ControllerBase
         _response.Result = await _testService.GetAllAsync(dto);
         return Ok(_response);
     }
+    
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetAsync(int id)
+    {
+        _response.Result = await _testService.Get(id);
+        return Ok(_response);
+    }
 }
