@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Exceptions.TaskResult;
@@ -8,8 +7,10 @@ using PTS.Contracts.Constants;
 using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
+using PTS.Contracts.Tests.Dto;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Results;
+using Z.Expressions;
 
 namespace PTS.Backend.Service;
 public class TestExecutionService(
@@ -26,35 +27,42 @@ public class TestExecutionService(
     public async Task<TestResultDto> GetTestStatusAsync(int testResultId, string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var test = await context.TestResults
+        var testResult = await context.TestResults
+            .Include(t => t.TaskResults)
             .Include(t => t.Test)
             .ThenInclude(t => t.TestTaskVersions)
             .FirstOrDefaultAsync(t => t.StudentId == userId)
             ?? throw new NotFoundException($"TestResult with {testResultId} id not found");
 
-        var mappedTest = _mapper.Map<TestResultDto>(test);
-        (mappedTest.CompletedTaskVersionIds, mappedTest.UncompletedTaskVersionIds) = GetTestStatus(test);
+        var test = await _testService.Get(testResult.Test.Id);
+        var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
+        mappedTestResult.Test = test;
+        (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
 
-        return mappedTest;
+        return mappedTestResult;
     }
 
     public async Task<List<TestResultDto>> GetUserTestsAsync(string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var tests = await context.TestResults
+        var testResults = await context.TestResults
+            .Include(t => t.TaskResults)
             .Include(t => t.Test)
             .ThenInclude(t => t.TestTaskVersions)
-            .Where(t => t.StudentId == userId)
+            .Where(t => t.StudentId == userId && t.SubmissionTime == null)
             .ToListAsync();
 
-        var mappedTests = new List<TestResultDto>();
-        foreach (var test in tests)
+        var mappedTestResults = new List<TestResultDto>();
+        foreach (var testResult in testResults)
         {
-            var mappedTest = _mapper.Map<TestResultDto>(test);
-            (mappedTest.CompletedTaskVersionIds, mappedTest.UncompletedTaskVersionIds) = GetTestStatus(test);
+            var test = await _testService.Get(testResult.Test.Id);
+            var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
+            mappedTestResult.Test = test;
+            (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
+            mappedTestResults.Add(mappedTestResult);
         }
 
-        return mappedTests;
+        return mappedTestResults;
     }
 
     public async Task<TestResultDto> StartTestAsync(StartTestDto dto, string userId)
@@ -103,9 +111,21 @@ public class TestExecutionService(
             TestResult = testResult
         };
         context.TaskResults.Add(taskResult);
-        await context.SaveChangesAsync();
 
-        return _mapper.Map<TestResultDto>(testResult);
+        (var completedTaskVersionIds, var uncompletedTaskVersionIds) = GetTestStatus(testResult);
+        if (uncompletedTaskVersionIds.Count == 0)
+        {
+            testResult.SubmissionTime = DateTime.UtcNow;
+        }
+
+        await context.SaveChangesAsync();
+        var test = await _testService.Get(testResult.Test.Id);
+        var mappedTest = _mapper.Map<TestResultDto>(testResult);
+        mappedTest.Test = test;
+        mappedTest.CompletedTaskVersionIds = completedTaskVersionIds;
+        mappedTest.UncompletedTaskVersionIds = uncompletedTaskVersionIds;
+
+        return mappedTest;
     }
 
     private bool CheckAnswer(TestResult testResult, VersionForTestResultDto version, SubmitTaskDto dto)
@@ -158,8 +178,22 @@ public class TestExecutionService(
 
     private bool CheckExecutableCodeTask(VersionForTestResultDto version, SubmitTaskDto dto)
     {
-        var testCase = version.TestCases.First(c => c.IsCorrect == true);
-        return testCase.Output == dto.Answer.Trim();
+        var testCases = version.TestCases.Where(c => c.IsCorrect == true).ToList();
+        foreach (var testCase in testCases)
+        {
+            var data = new InputData
+            {
+                Values = testCase.Input.Split(' ').ToList()
+            };
+
+            var output = Eval.Execute<string>(dto.Answer, data);
+            if (output != testCase.Output)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private (List<int> CompletedTaskVersionIds, List<int> UncompletedTaskVersionIds) GetTestStatus(TestResult testResult)
@@ -169,9 +203,9 @@ public class TestExecutionService(
             .Distinct()
             .ToList();
         var completedTaskVersionIds = testResult.TaskResults
-            .Select(r => r.TaskVersionId)
+            ?.Select(r => r.TaskVersionId)
             .Distinct()
-            .ToList();
+            .ToList() ?? new List<int>();
         return (completedTaskVersionIds, fullTaskVersionIds.Except(completedTaskVersionIds).ToList());
     }
 }

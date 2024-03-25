@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using PTS.Contracts.PTSTestResults;
+using PTS.Contracts.Statistics;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Test;
 using PTS.Contracts.TestCases.Dto;
@@ -28,6 +29,8 @@ public static class TestMappingConfig
             config.CreateMap<TestResult, TestResultDto>()
                 .ForMember(dto => dto.Test, opt => opt.MapFrom(tr => tr.Test))
                 .ForMember(dto => dto.IsCompleted, opt => opt.MapFrom(tr => tr.SubmissionTime != null));
+            config.CreateMap<TestResult, TestStatisticsDto>()
+                .ForMember(dto => dto.Test, opt => opt.MapFrom(tr => tr.Test));
         });
 
         return mappingConfig;

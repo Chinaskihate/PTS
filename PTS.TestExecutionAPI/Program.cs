@@ -42,6 +42,7 @@ try
     builder.Services.AddScoped<ITaskVersionProxyService, TaskVersionProxyService>();
     builder.Services.AddScoped<ITestService, TestService>();
     builder.Services.AddScoped<ITestExecutionService, TestExecutionService>();
+    builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
@@ -54,7 +55,7 @@ try
     app.UseCors();
     app.UseSwaggerPTS();
 
-    app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
     app.UseMiddleware<CheckTokenMiddleware>();
     app.UseMiddleware<UserIdMiddleware>();
     app.UseExceptionHandlerPTS();
