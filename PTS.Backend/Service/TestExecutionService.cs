@@ -47,7 +47,7 @@ public class TestExecutionService(
             .Include(t => t.TaskResults)
             .Include(t => t.Test)
             .ThenInclude(t => t.TestTaskVersions)
-            .Where(t => t.StudentId == userId && t.SubmissionTime == null)
+            .Where(t => t.StudentId == userId)
             .ToListAsync();
 
         var mappedTestResults = new List<TestResultDto>();
@@ -166,22 +166,29 @@ public class TestExecutionService(
 
     private bool CheckExecutableCodeTask(VersionForTestResultDto version, SubmitTaskDto dto)
     {
-        var testCases = version.TestCases.Where(c => c.IsCorrect == true).ToList();
-        foreach (var testCase in testCases)
+        try
         {
-            var data = new InputData
+            var testCases = version.TestCases.Where(c => c.IsCorrect == true).ToList();
+            foreach (var testCase in testCases)
             {
-                Values = testCase.Input.Split(' ').ToList()
-            };
+                var data = new InputData
+                {
+                    Values = testCase.Input.Split(' ').ToList()
+                };
 
-            var output = Eval.Execute<string>(dto.Answer, data);
-            if (output != testCase.Output)
-            {
-                return false;
+                var output = Eval.Execute<string>(dto.Answer, data);
+                if (output != testCase.Output)
+                {
+                    return false;
+                }
             }
-        }
 
-        return true;
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     private (List<int> CompletedTaskVersionIds, List<int> UncompletedTaskVersionIds) GetTestStatus(TestResult testResult)
