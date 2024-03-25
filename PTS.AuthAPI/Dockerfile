@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+USER root
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
@@ -19,5 +19,12 @@ RUN dotnet publish "./PTS.AuthAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 
 FROM base AS final
 WORKDIR /app
+
+RUN mkdir -p /app/https
+COPY ./localhost.crt /app/https/localhost.crt
+COPY ./localhost.pfx /app/https/localhost.pfx
+COPY ./localhost.crt /etc/ssl/certs/
+RUN update-ca-certificates
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "PTS.AuthAPI.dll"]
