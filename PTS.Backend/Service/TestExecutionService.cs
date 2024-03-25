@@ -7,6 +7,7 @@ using PTS.Contracts.Constants;
 using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
+using PTS.Contracts.Tests.Dto;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Results;
 using Z.Expressions;
@@ -26,36 +27,42 @@ public class TestExecutionService(
     public async Task<TestResultDto> GetTestStatusAsync(int testResultId, string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var test = await context.TestResults
+        var testResult = await context.TestResults
+            .Include(t => t.TaskResults)
             .Include(t => t.Test)
             .ThenInclude(t => t.TestTaskVersions)
             .FirstOrDefaultAsync(t => t.StudentId == userId)
             ?? throw new NotFoundException($"TestResult with {testResultId} id not found");
 
-        var mappedTest = _mapper.Map<TestResultDto>(test);
-        (mappedTest.CompletedTaskVersionIds, mappedTest.UncompletedTaskVersionIds) = GetTestStatus(test);
+        var test = await _testService.Get(testResult.Test.Id);
+        var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
+        mappedTestResult.Test = test;
+        (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
 
-        return mappedTest;
+        return mappedTestResult;
     }
 
     public async Task<List<TestResultDto>> GetUserTestsAsync(string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        var tests = await context.TestResults
+        var testResults = await context.TestResults
+            .Include(t => t.TaskResults)
             .Include(t => t.Test)
             .ThenInclude(t => t.TestTaskVersions)
-            .Where(t => t.StudentId == userId)
+            .Where(t => t.StudentId == userId && t.SubmissionTime == null)
             .ToListAsync();
 
-        var mappedTests = new List<TestResultDto>();
-        foreach (var test in tests)
+        var mappedTestResults = new List<TestResultDto>();
+        foreach (var testResult in testResults)
         {
-            var mappedTest = _mapper.Map<TestResultDto>(test);
-            (mappedTest.CompletedTaskVersionIds, mappedTest.UncompletedTaskVersionIds) = GetTestStatus(test);
-            mappedTests.Add(mappedTest);
+            var test = await _testService.Get(testResult.Test.Id);
+            var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
+            mappedTestResult.Test = test;
+            (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
+            mappedTestResults.Add(mappedTestResult);
         }
 
-        return mappedTests;
+        return mappedTestResults;
     }
 
     public async Task<TestResultDto> StartTestAsync(StartTestDto dto, string userId)
@@ -103,10 +110,22 @@ public class TestExecutionService(
             TaskVersionId = dto.TaskVersionId,
             TestResult = testResult
         };
-        //context.TaskResults.Add(taskResult);
-        //await context.SaveChangesAsync();
+        context.TaskResults.Add(taskResult);
 
-        return _mapper.Map<TestResultDto>(testResult);
+        (var completedTaskVersionIds, var uncompletedTaskVersionIds) = GetTestStatus(testResult);
+        if (uncompletedTaskVersionIds.Count == 0)
+        {
+            testResult.SubmissionTime = DateTime.UtcNow;
+        }
+
+        await context.SaveChangesAsync();
+        var test = await _testService.Get(testResult.Test.Id);
+        var mappedTest = _mapper.Map<TestResultDto>(testResult);
+        mappedTest.Test = test;
+        mappedTest.CompletedTaskVersionIds = completedTaskVersionIds;
+        mappedTest.UncompletedTaskVersionIds = uncompletedTaskVersionIds;
+
+        return mappedTest;
     }
 
     private bool CheckAnswer(TestResult testResult, VersionForTestResultDto version, SubmitTaskDto dto)
@@ -188,10 +207,5 @@ public class TestExecutionService(
             .Distinct()
             .ToList() ?? new List<int>();
         return (completedTaskVersionIds, fullTaskVersionIds.Except(completedTaskVersionIds).ToList());
-    }
-
-    private class InputData
-    {
-        public List<string> Values { get; set; }
     }
 }
