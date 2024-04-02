@@ -3,7 +3,6 @@ using PTS.Contracts.Constants;
 using PTS.Persistence.Models.TestCases;
 using PTS.Persistence.Models.Themes;
 using PTS.Persistence.Models.Versions;
-using System.Reflection.Metadata;
 using Task = PTS.Persistence.Models.Tasks.Task;
 
 namespace PTS.Persistence.DbContexts;
@@ -31,7 +30,7 @@ public class TaskDbContext : DbContext
         modelBuilder.Entity<Theme>().HasData(new Theme
         {
             Id = Constants.GlobalRootThemeId,
-            Name = "RootTheme",
+            Name = Constants.GlobalRootThemeName,
             IsBanned = false
         });
     }

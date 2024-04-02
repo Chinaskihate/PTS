@@ -5,6 +5,11 @@ using PTS.Persistence.Models.Users;
 namespace PTS.Persistence.DbContexts;
 public class UserDbContext : IdentityDbContext<ApplicationUser>
 {
+    public UserDbContext() : base()
+    {
+        
+    }
+
     public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
     {
 
