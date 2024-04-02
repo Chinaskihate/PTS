@@ -1,7 +1,6 @@
-﻿using PTS.Persistence.Models.Versions;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace PTS.Persistence.Models.TestCases;
+namespace PTS.Persistence.Models.Tasks;
 public class TestCase
 {
     [Key]

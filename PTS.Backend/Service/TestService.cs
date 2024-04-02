@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PTS.Backend.Exceptions.Common;
@@ -9,7 +8,6 @@ using PTS.Contracts.Tests.Dto;
 using PTS.Contracts.Versions.Dto;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Tests;
-using PTS.Persistence.Models.Tests.Versions;
 
 namespace PTS.Backend.Service;
 public class TestService(

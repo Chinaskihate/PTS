@@ -1,6 +1,4 @@
-﻿using PTS.Persistence.Models.Results;
-using PTS.Persistence.Models.Tests.Versions;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PTS.Persistence.Models.Tests;
 public class Test

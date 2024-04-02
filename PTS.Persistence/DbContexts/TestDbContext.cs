@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PTS.Persistence.Models.Results;
 using PTS.Persistence.Models.Tests;
-using PTS.Persistence.Models.Tests.Versions;
 
 namespace PTS.Persistence.DbContexts;
 public class TestDbContext : DbContext

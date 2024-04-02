@@ -1,8 +1,7 @@
-﻿using PTS.Persistence.Models.TestCases;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Task = PTS.Persistence.Models.Tasks.Task;
 
-namespace PTS.Persistence.Models.Versions;
+namespace PTS.Persistence.Models.Tasks;
 public class TaskVersion
 {
     [Key]

@@ -9,7 +9,7 @@ using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Theme.Dto;
 using PTS.Contracts.Versions.Dto;
 using PTS.Persistence.DbContexts;
-using PTS.Persistence.Models.Versions;
+using PTS.Persistence.Models.Tasks;
 
 namespace PTS.Backend.Service;
 public class TaskVersionService(

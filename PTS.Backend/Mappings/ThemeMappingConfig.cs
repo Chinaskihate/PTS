@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using PTS.Contracts.Theme.Dto;
-using PTS.Persistence.Models.Themes;
+using PTS.Persistence.Models.Tasks;
 
 namespace PTS.Backend.Mappings;
 public static class ThemeMappingConfig

@@ -1,8 +1,7 @@
-﻿using PTS.Persistence.Models.Tasks;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Task = PTS.Persistence.Models.Tasks.Task;
 
-namespace PTS.Persistence.Models.Themes;
+namespace PTS.Persistence.Models.Tasks;
 public class Theme
 {
     [Key]

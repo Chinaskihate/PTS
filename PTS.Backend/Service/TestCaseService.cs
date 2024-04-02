@@ -4,7 +4,7 @@ using PTS.Backend.Service.IService;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.TestCases.Dto;
 using PTS.Persistence.DbContexts;
-using PTS.Persistence.Models.TestCases;
+using PTS.Persistence.Models.Tasks;
 
 namespace PTS.Backend.Service;
 public class TestCaseService(

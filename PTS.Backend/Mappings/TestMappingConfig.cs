@@ -6,7 +6,6 @@ using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Test;
 using PTS.Contracts.TestCases.Dto;
 using PTS.Contracts.Versions.Dto;
-using PTS.Persistence.Models.Results;
 using PTS.Persistence.Models.Tests;
 
 namespace PTS.Backend.Mappings;

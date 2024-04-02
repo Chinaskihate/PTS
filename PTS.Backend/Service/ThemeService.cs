@@ -5,7 +5,7 @@ using PTS.Backend.Service.IService;
 using PTS.Contracts.Constants;
 using PTS.Contracts.Theme.Dto;
 using PTS.Persistence.DbContexts;
-using PTS.Persistence.Models.Themes;
+using PTS.Persistence.Models.Tasks;
 
 namespace PTS.Backend.Service;
 public class ThemeService(

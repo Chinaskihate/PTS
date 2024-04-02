@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PTS.Contracts.Constants;
-using PTS.Persistence.Models.TestCases;
-using PTS.Persistence.Models.Themes;
-using PTS.Persistence.Models.Versions;
+using PTS.Persistence.Models.Tasks;
 using Task = PTS.Persistence.Models.Tasks.Task;
 
 namespace PTS.Persistence.DbContexts;

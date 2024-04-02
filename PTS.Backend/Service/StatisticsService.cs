@@ -7,7 +7,7 @@ using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Tests.Dto;
 using PTS.Persistence.DbContexts;
-using PTS.Persistence.Models.Results;
+using PTS.Persistence.Models.Tests;
 using Z.Expressions;
 
 namespace PTS.Backend.Service;

@@ -1,7 +1,6 @@
-﻿using PTS.Persistence.Models.Tests;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace PTS.Persistence.Models.Results;
+namespace PTS.Persistence.Models.Tests;
 public class TestResult
 {
     [Key]

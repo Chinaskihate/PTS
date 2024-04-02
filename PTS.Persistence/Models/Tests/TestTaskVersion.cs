@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PTS.Persistence.Models.Tests.Versions;
+namespace PTS.Persistence.Models.Tests;
 public class TestTaskVersion
 {
     [Key]

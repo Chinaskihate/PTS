@@ -1,7 +1,6 @@
 ﻿using PTS.Contracts.Tasks;
-using PTS.Persistence.Models.Versions;
 using System.ComponentModel.DataAnnotations;
-using Theme = PTS.Persistence.Models.Themes.Theme;
+using Theme = PTS.Persistence.Models.Tasks.Theme;
 
 namespace PTS.Persistence.Models.Tasks;
 public class Task
