@@ -7,6 +7,10 @@ openssl pkcs12 -export -in localhost.crt -inkey localhost.key -out localhost.pfx
 
 sudo cp localhost.crt /usr/local/share/ca-certificates
 
+In root of solution create .env file
+========
+ASPNETCORE_ENVIRONMENT="{some_env}"
+
 For start
 ========
 docker compose up --build
