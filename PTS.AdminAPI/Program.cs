@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using PTS.AdminAPI.Services;
 using PTS.Backend.Extensions;
 using PTS.Backend.Mappings;
+using PTS.Backend.Middlewares;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
 using PTS.Backend.Utils;
@@ -55,6 +56,7 @@ try
 
     app.UseCors();
     app.UseSwaggerPTS();
+    app.UseMiddleware<CheckTokenMiddleware>();
     app.UseExceptionHandlerPTS();
 
     app.UseHttpsRedirection();
