@@ -51,7 +51,7 @@ try
     app.UseSwaggerPTS();
     app.UseExceptionHandlerPTS();
 
-    //app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 
     app.UseAuthentication();
     app.UseAuthorization();
