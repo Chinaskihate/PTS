@@ -37,4 +37,12 @@ public class TaskController(ITaskService taskService) : ControllerBase
         _response.Result = await _taskService.GetAsync(id);
         return Ok(_response);
     }
+
+    [HttpGet()]
+    [Authorize(Roles = UserRoles.TaskManagerRoles)]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        _response.Result = await _taskService.GetAllAsync();
+        return Ok(_response);
+    }
 }
