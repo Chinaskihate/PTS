@@ -28,6 +28,7 @@ public class TestService(
             Name = dto.Name,
             Description = dto.Description,
             IsEnabled = dto.IsEnabled,
+            AllowedExecutionTimeInSec = dto.AllowedExecutionTimeInSec
         };
 
         foreach (var item in dto.Versions)

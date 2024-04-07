@@ -10,5 +10,7 @@ public class CreateTestRequest
     [Required]
     public bool IsEnabled { get; set; }
     [Required]
+    public int AllowedExecutionTimeInSec { get; set; }
+    [Required]
     public List<VersionForCreateTestDto> Versions { get; set; } 
 }
