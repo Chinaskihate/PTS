@@ -148,6 +148,7 @@ services:
       context: .
       dockerfile: PTS.TestGeneratorService/Dockerfile
     environment:
+      - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_URLS=http://+:7008
       - ASPNETCORE_Kestrel__Certificates__Default__Password=password
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
