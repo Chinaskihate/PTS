@@ -9,5 +9,6 @@ public interface ITaskVersionService
     Task<TaskDto> EditAsync(int taskId, int versionId, EditVersionRequest dto);
     Task<TaskDto> EditAsync(int taskId, EditVersionWithIdRequest dto);
     Task<VersionForTestDto[]> GetAllAsync(GetTaskVersionsRequestDto dto);
-    Task<VersionForTestResultDto[]> GetAsync(GetTaskVersionsForTestResultRequestDto dto);
+    Task<VersionForTestResultDto[]> GetFullAsync(GetTaskVersionsForTestResultRequestDto dto);
+    Task<VersionForTestResultDto> GetAsync(int taskId, int versionId);
 }

@@ -34,9 +34,7 @@ public class TestExecutionService(
             .FirstOrDefaultAsync(t => t.StudentId == userId)
             ?? throw new NotFoundException($"TestResult with {testResultId} id not found");
 
-        var test = await _testService.Get(testResult.Test.Id);
         var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
-        mappedTestResult.Test = test;
         (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
 
         return mappedTestResult;
@@ -49,15 +47,13 @@ public class TestExecutionService(
             .Include(t => t.TaskResults)
             .Include(t => t.Test)
             .ThenInclude(t => t.TestTaskVersions)
-            .Where(t => t.StudentId == userId && t.SubmissionTime == null)
+            .Where(t => t.StudentId == userId)
             .ToListAsync();
 
         var mappedTestResults = new List<TestResultDto>();
         foreach (var testResult in testResults)
         {
-            var test = await _testService.Get(testResult.Test.Id);
             var mappedTestResult = _mapper.Map<TestResultDto>(testResult);
-            mappedTestResult.Test = test;
             (mappedTestResult.CompletedTaskVersionIds, mappedTestResult.UncompletedTaskVersionIds) = GetTestStatus(testResult);
             mappedTestResults.Add(mappedTestResult);
         }
@@ -102,7 +98,7 @@ public class TestExecutionService(
         var version = taskVersions.FirstOrDefault(v => v.Id == dto.TaskVersionId)
             ?? throw new NotFoundException($"Version with {dto.TaskVersionId} not found");
 
-        var isCorrect = CheckAnswer(testResult, version, dto);
+        var isCorrect = CheckAnswer(version, dto);
         var taskResult = new TaskResult
         {
             Input = dto.Answer,
@@ -119,23 +115,15 @@ public class TestExecutionService(
         }
 
         await context.SaveChangesAsync();
-        var test = await _testService.Get(testResult.Test.Id);
         var mappedTest = _mapper.Map<TestResultDto>(testResult);
-        mappedTest.Test = test;
         mappedTest.CompletedTaskVersionIds = completedTaskVersionIds;
         mappedTest.UncompletedTaskVersionIds = uncompletedTaskVersionIds;
 
         return mappedTest;
     }
 
-    private bool CheckAnswer(TestResult testResult, VersionForTestResultDto version, SubmitTaskDto dto)
+    private bool CheckAnswer(VersionForTestResultDto version, SubmitTaskDto dto)
     {
-        if (version.Type != TaskType.ExecutableCode
-            && testResult.TaskResults.Any(r => r.TaskVersionId == dto.TaskVersionId))
-        {
-            throw new TaskAlreadySubmittedException("Task already submitted");
-        }
-
         switch (version.Type)
         {
             case TaskType.SingleChoice:
@@ -178,22 +166,29 @@ public class TestExecutionService(
 
     private bool CheckExecutableCodeTask(VersionForTestResultDto version, SubmitTaskDto dto)
     {
-        var testCases = version.TestCases.Where(c => c.IsCorrect == true).ToList();
-        foreach (var testCase in testCases)
+        try
         {
-            var data = new InputData
+            var testCases = version.TestCases.Where(c => c.IsCorrect == true).ToList();
+            foreach (var testCase in testCases)
             {
-                Values = testCase.Input.Split(' ').ToList()
-            };
+                var data = new InputData
+                {
+                    Values = testCase.Input.Split(' ').ToList()
+                };
 
-            var output = Eval.Execute<string>(dto.Answer, data);
-            if (output != testCase.Output)
-            {
-                return false;
+                var output = Eval.Execute<string>(dto.Answer, data);
+                if (output != testCase.Output)
+                {
+                    return false;
+                }
             }
-        }
 
-        return true;
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     private (List<int> CompletedTaskVersionIds, List<int> UncompletedTaskVersionIds) GetTestStatus(TestResult testResult)

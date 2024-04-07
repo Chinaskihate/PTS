@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0C2BFA38-7622-4324-A60A-0D813E0FD230}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTS.TG.Bot.Client", "src\PTS.TG.Bot.Client\PTS.TG.Bot.Client.csproj", "{09A4D3DC-9FE5-4844-B97D-B2BD41A85AB3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09A4D3DC-9FE5-4844-B97D-B2BD41A85AB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09A4D3DC-9FE5-4844-B97D-B2BD41A85AB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09A4D3DC-9FE5-4844-B97D-B2BD41A85AB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09A4D3DC-9FE5-4844-B97D-B2BD41A85AB3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{09A4D3DC-9FE5-4844-B97D-B2BD41A85AB3} = {0C2BFA38-7622-4324-A60A-0D813E0FD230}
+	EndGlobalSection
+EndGlobal

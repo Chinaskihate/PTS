@@ -10,4 +10,5 @@ public class TestResultDto
     public DateTime? SubmissionTime { get; set; }
     public List<int>? CompletedTaskVersionIds { get; set; }
     public List<int>? UncompletedTaskVersionIds { get; set; }
+    public List<TaskResultDto> TaskResults { get; set; }
 }

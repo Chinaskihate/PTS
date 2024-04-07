@@ -40,9 +40,16 @@ public class TaskVersionController(ITaskVersionService taskVersionService) : Con
     }
 
     [HttpPost("full")]
-    public async Task<IActionResult> Get(GetTaskVersionsForTestResultRequestDto dto)
+    public async Task<IActionResult> GetFull(GetTaskVersionsForTestResultRequestDto dto)
     {
-        _response.Result = await _taskVersionService.GetAsync(dto);
+        _response.Result = await _taskVersionService.GetFullAsync(dto);
+        return Ok(_response);
+    }
+    
+    [HttpGet("{taskId:int}/version/{versionId:int}")]
+    public async Task<IActionResult> GetFull(int taskId, int versionId)
+    {
+        _response.Result = await _taskVersionService.GetAsync(taskId, versionId);
         return Ok(_response);
     }
 }

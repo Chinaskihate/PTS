@@ -195,7 +195,7 @@ public class TaskVersionService(
         return _mapper.Map<VersionForTestDto[]>(uploadedVersions);
     }
 
-    public async Task<VersionForTestResultDto[]> GetAsync(GetTaskVersionsForTestResultRequestDto dto)
+    public async Task<VersionForTestResultDto[]> GetFullAsync(GetTaskVersionsForTestResultRequestDto dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var versions = await context.TaskVersions
@@ -205,6 +205,17 @@ public class TaskVersionService(
             .ToListAsync();
 
         return _mapper.Map<VersionForTestResultDto[]>(versions);
+    }
+
+    public async Task<VersionForTestResultDto> GetAsync(int taskId, int versionId)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var result = await context.TaskVersions
+            .Include(v => v.Task)
+            .Include(v => v.TestCases)
+            .FirstAsync(v => v.Id == versionId && v.Task.Id == taskId);
+        
+        return _mapper.Map<VersionForTestResultDto>(result);
     }
 
     private bool IsRequestedTheme(ThemeDto dto, int[] allowedThemeIds)
