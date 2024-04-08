@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Common;
-using PTS.Contracts.Constants;
 using PTS.Contracts.PTSTestResults;
+using PTS.Backend.Extensions;
 
 namespace PTS.TestExecutionAPI.Controllers;
 
@@ -19,30 +19,28 @@ public class TestExecutionController(ITestExecutionService testExecutionService)
     [HttpPost("start")]
     public async Task<IActionResult> StartAsync([FromBody] StartTestDto dto)
     {
-        _response.Result = await _testExecutionService.StartTestAsync(dto, GetUserId());
+        _response.Result = await _testExecutionService.StartTestAsync(dto, this.GetUserId());
         return Ok(_response);
     }
 
     [HttpGet]
     public async Task<IActionResult> GetUserTests()
     {
-        _response.Result = await _testExecutionService.GetUserTestsAsync(GetUserId());
+        _response.Result = await _testExecutionService.GetUserTestsAsync(this.GetUserId());
         return Ok(_response);
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetTestStatusAsync(int testResultId)
     {
-        _response.Result = await _testExecutionService.GetTestStatusAsync(testResultId, GetUserId());
+        _response.Result = await _testExecutionService.GetTestStatusAsync(testResultId, this.GetUserId());
         return Ok(_response);
     }
 
     [HttpPost("submit")]
     public async Task<IActionResult> SubmitTaskAsync(SubmitTaskDto dto)
     {
-        _response.Result = await _testExecutionService.SubmitTaskAsync(dto, GetUserId());
+        _response.Result = await _testExecutionService.SubmitTaskAsync(dto, this.GetUserId());
         return Ok(_response);
     }
-
-    private string GetUserId() => Request.Headers[Constants.UserIdHeader];
 }

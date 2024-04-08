@@ -11,6 +11,8 @@ public class Test
     [Required]
     public bool IsEnabled { get; set; }
     [Required]
+    public string CreatorId { get; set; }
+    [Required]
     public int AllowedExecutionTimeInSec { get; set; }
     public List<TestTaskVersion> TestTaskVersions { get; set; } = [];
     public List<TestResult> TestResults { get; set; }

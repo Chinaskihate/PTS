@@ -19,7 +19,7 @@ public class TestService(
     private readonly ITaskVersionProxyService _versionService = versionService;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<TestDto> Create(CreateTestRequest dto)
+    public async Task<TestDto> Create(CreateTestRequest dto, string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var versions = new List<VersionForTestDto>();
@@ -28,7 +28,8 @@ public class TestService(
             Name = dto.Name,
             Description = dto.Description,
             IsEnabled = dto.IsEnabled,
-            AllowedExecutionTimeInSec = dto.AllowedExecutionTimeInSec
+            AllowedExecutionTimeInSec = dto.AllowedExecutionTimeInSec,
+            CreatorId = userId
         };
 
         foreach (var item in dto.Versions)

@@ -8,5 +8,6 @@ public class TestDto
     public string Description { get; set; }
     public bool IsEnabled { get; set; }
     public int AllowedExecutionTimeInSec { get; set; }
+    public string CreatorId { get; set; }
     public List<VersionForTestDto> TaskVersions { get; set; }
 }
