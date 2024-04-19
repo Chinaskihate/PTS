@@ -12,6 +12,7 @@ using PTS.Persistence.Models.Tests;
 using Serilog;
 using System;
 using System.Runtime.Serialization.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PTS.Backend.Service;
 public class TestService(
@@ -117,6 +118,14 @@ public class TestService(
         if (dto.TaskCount != null)
         {
             uploadedTests = uploadedTests.Where(t => t.TestTaskVersions.Count == dto.TaskCount).ToList();
+        }
+        foreach (var test in uploadedTests)
+        {
+            Log.Warning($"Test {test.Id}");
+            foreach (var testTaskVersion in test.TestTaskVersions)
+            {
+                Log.Warning($"Task Id {testTaskVersion.TaskId} Task Version Id {testTaskVersion.TaskId}");
+            }
         }
 
         var result = new List<TestDto>();
