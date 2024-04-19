@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Test;
@@ -8,6 +9,9 @@ using PTS.Contracts.Tests.Dto;
 using PTS.Contracts.Versions.Dto;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Tests;
+using Serilog;
+using System;
+using System.Runtime.Serialization.Json;
 
 namespace PTS.Backend.Service;
 public class TestService(
@@ -116,11 +120,12 @@ public class TestService(
         }
 
         var result = new List<TestDto>();
-        foreach (var test in tests)
+        foreach (var test in uploadedTests)
         {
             var mapped = _mapper.Map<TestDto>(test);
             result.Add(mapped);
             var versions = new List<VersionForTestDto>();
+            Log.Warning($"Getting {JsonConvert.SerializeObject(test.TestTaskVersions)} task versions");
             foreach (var testTaskVersion in test.TestTaskVersions)
             {
                 versions.Add(await _versionService.GetAsync(testTaskVersion.TaskId, testTaskVersion.TaskVersionId));
