@@ -29,7 +29,7 @@ public class TestManagerController(ITestService testService) : ControllerBase
     [HttpPost("filtered")]
     public async Task<IActionResult> GetAllAsync(GetTestsRequestDto dto)
     {
-        _response.Result = await _testService.GetAllAsync(dto);
+        _response.Result = await _testService.GetAllAsync(dto, this.GetUserId());
         return Ok(_response);
     }
     

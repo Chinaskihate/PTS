@@ -52,7 +52,7 @@ public class TestGeneratorService(ITaskVersionProxyService versionService, ITest
     {
         var tasksCount = filteredTasks.Count;
         var testTime = request.Time ?? int.MaxValue;
-        return filteredTasks.Take(Math.Min(1, request.TaskCount)).ToList();
+        return filteredTasks.Take(request.TaskCount).ToList();
     }
 
     private static IEnumerable<VersionForTestDto> Filter(IReadOnlyList<VersionForTestDto> tasks, int testTime,

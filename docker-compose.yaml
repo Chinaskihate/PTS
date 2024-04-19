@@ -30,7 +30,6 @@ services:
       - pts-dev
   auth-api:
     container_name: pts-auth-api
-    image: markwantsapi/auth-api
     build:
       context: .
       dockerfile: PTS.AuthAPI/Dockerfile
