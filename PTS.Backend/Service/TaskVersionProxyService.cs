@@ -5,6 +5,7 @@ using PTS.Backend.Utils;
 using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Versions.Dto;
+using Serilog;
 using System.Collections;
 
 namespace PTS.Backend.Service;
@@ -40,10 +41,15 @@ public class TaskVersionProxyService(
             ApiType = Contracts.Common.ApiType.GET,
             Url = SD.TaskAPIBase + $"/api/task/{taskId}"
         });
+        Log.Warning($"Got {taskId} taskId {versionId} versionId");
         var serialized = JsonConvert.SerializeObject(response.Result);
+        Log.Warning($"Serialized: {serialized}");
         var result = JsonConvert.DeserializeObject<TaskDto>(serialized);
+        Log.Warning($"Deserialized: {result}");
         result.Versions = result.Versions.Where(v => v.Id == versionId).ToList();
-        var mapped = _mapper.Map<IEnumerable<VersionForTestDto>>(result);
+        Log.Warning($"Versions: {result.Versions}");
+        var mapped = _mapper.Map<IEnumerable<VersionForTestDto>>(result).ToList();
+        Log.Warning($"Version: {result.Versions}");
 
         return mapped.First();
     }
