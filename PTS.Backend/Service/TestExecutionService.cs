@@ -95,18 +95,36 @@ public class TestExecutionService(
         {
             TaskVersionsIds = testResult.Test.TestTaskVersions.Select(v => v.TaskVersionId).ToArray()
         });
-        var version = taskVersions.FirstOrDefault(v => v.Id == dto.TaskVersionId)
+        if (dto.ForceFinish == true)
+        {
+            (var _, var taskVersionIdsToComplete) = GetTestStatus(testResult);
+            foreach (var taskVersionId in taskVersionIdsToComplete)
+            {
+                context.TaskResults.Add(new TaskResult
+                {
+                    Input = Constants.AnswerTemplateOnForceFinish,
+                    IsCorrect = false,
+                    TaskVersionId = taskVersionId,
+                    TestResult = testResult
+                });
+            }
+        }
+        else
+        {
+            var version = taskVersions.FirstOrDefault(v => v.Id == dto.TaskVersionId)
             ?? throw new NotFoundException($"Version with {dto.TaskVersionId} not found");
 
-        var isCorrect = CheckAnswer(version, dto);
-        var taskResult = new TaskResult
-        {
-            Input = dto.Answer,
-            IsCorrect = isCorrect,
-            TaskVersionId = dto.TaskVersionId,
-            TestResult = testResult
-        };
-        context.TaskResults.Add(taskResult);
+            var isCorrect = CheckAnswer(version, dto);
+            var taskResult = new TaskResult
+            {
+                Input = dto.Answer,
+                IsCorrect = isCorrect,
+                TaskVersionId = dto.TaskVersionId.Value,
+                TestResult = testResult
+            };
+            context.TaskResults.Add(taskResult);
+        }
+
 
         (var completedTaskVersionIds, var uncompletedTaskVersionIds) = GetTestStatus(testResult);
         if (uncompletedTaskVersionIds.Count == 0)

@@ -7,4 +7,5 @@ public class Constants
     public const string UserIdHeader = "UserId";
 
     public const string MultipleChoiceDelimiter = "&&&";
+    public const string AnswerTemplateOnForceFinish = "@@@force-finish@@@";
 }

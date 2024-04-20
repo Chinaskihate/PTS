@@ -1,6 +1,7 @@
+version: "3"
 networks:
   pts-dev:
-    driver: bridge
+    external: true
 services:
   db:
     container_name: pts-db

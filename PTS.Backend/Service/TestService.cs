@@ -81,6 +81,12 @@ public class TestService(
 
         var result = _mapper.Map<TestDto>(test);
         var versions = new List<VersionForTestDto>();
+        Log.Warning($"Test {test.Id}");
+        foreach (var testTaskVersion in test.TestTaskVersions)
+        {
+            Log.Warning($"Task Id {testTaskVersion.TaskId} Task Version Id {testTaskVersion.TaskId}");
+        }
+
         foreach (var testTaskVersion in test.TestTaskVersions)
         {
             versions.Add(await _versionService.GetAsync(testTaskVersion.TaskId, testTaskVersion.TaskVersionId));
