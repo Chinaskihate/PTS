@@ -35,16 +35,11 @@ services:
       dockerfile: PTS.AuthAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-      - ASPNETCORE_URLS=https://+:7002
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+      - ASPNETCORE_URLS=http://+:7002
     ports:
       - "7002:7002"
     depends_on:
       - db
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
   admin-api:
     container_name: pts-admin-api
@@ -130,8 +125,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_URLS=https://+:7007
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
       - "7007:7007"
     depends_on:
