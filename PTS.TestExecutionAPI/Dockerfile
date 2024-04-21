@@ -22,11 +22,5 @@ RUN dotnet publish "./PTS.TestExecutionAPI.csproj" -c $BUILD_CONFIGURATION -o /a
 FROM base AS final
 WORKDIR /app
 
-RUN mkdir -p /app/https
-COPY ./localhost.crt /app/https/localhost.crt
-COPY ./localhost.pfx /app/https/localhost.pfx
-COPY ./localhost.crt /etc/ssl/certs/
-RUN update-ca-certificates
-
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "PTS.TestExecutionAPI.dll"]

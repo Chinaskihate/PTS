@@ -50,7 +50,6 @@ try
     app.UseCors();
     app.UseSwaggerPTS();
 
-    app.UseHttpsRedirection();
     app.UseMiddleware<CheckTokenMiddleware>();
     app.UseExceptionHandlerPTS();
     app.UseAuthentication();

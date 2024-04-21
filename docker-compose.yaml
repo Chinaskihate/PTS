@@ -48,17 +48,12 @@ services:
       dockerfile: PTS.AdminAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-      - ASPNETCORE_URLS=https://+:7003
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+      - ASPNETCORE_URLS=http://+:7003
     ports:
       - "7003:7003"
     depends_on:
       - db
       - auth-api
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
   theme-api:
     container_name: pts-theme-api
@@ -67,17 +62,12 @@ services:
       dockerfile: PTS.ThemeAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-      - ASPNETCORE_URLS=https://+:7004
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+      - ASPNETCORE_URLS=http://+:7004
     ports:
       - "7004:7004"
     depends_on:
       - db
       - admin-api
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
   task-api:
     container_name: pts-task-api
@@ -86,17 +76,12 @@ services:
       dockerfile: PTS.TaskAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-      - ASPNETCORE_URLS=https://+:7005
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+      - ASPNETCORE_URLS=http://+:7005
     ports:
       - "7005:7005"
     depends_on:
       - db
       - theme-api
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
   test-api:
     container_name: pts-test-api
@@ -105,17 +90,12 @@ services:
       dockerfile: PTS.TestAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-      - ASPNETCORE_URLS=https://+:7006
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+      - ASPNETCORE_URLS=http://+:7006
     ports:
       - "7006:7006"
     depends_on:
       - db
       - task-api
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
   test-exec-api:
     container_name: pts-exec-api
@@ -124,15 +104,12 @@ services:
       dockerfile: PTS.TestExecutionAPI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-      - ASPNETCORE_URLS=https://+:7007
+      - ASPNETCORE_URLS=http://+:7007
     ports:
       - "7007:7007"
     depends_on:
       - db
       - test-api
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
     restart: always
   test-generator-api:
     container_name: pts-test-generator-api
@@ -142,16 +119,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_URLS=http://+:7008
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     ports:
       - "7008:7008"
     depends_on:
       - db
       - admin-api
-    volumes:
-      - ./localhost.pfx:/https/localhost.pfx:ro
-      - ./localhost.crt:/usr/local/share/ca-certificates/localhost.crt:ro
 volumes:
   db:
   pg-admin:

@@ -59,13 +59,10 @@ try
     app.UseMiddleware<CheckTokenMiddleware>();
     app.UseExceptionHandlerPTS();
 
-    app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseAuthorization();
 
-
     app.MapControllers();
-
 
     app.Run();
 }
