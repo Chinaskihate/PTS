@@ -24,7 +24,7 @@ public class TestService(
     private readonly ITaskVersionProxyService _versionService = versionService;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<TestDto> Create(CreateTestRequest dto, string userId)
+    public async Task<TestDto> CreateAsync(CreateTestRequest dto, string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var versions = new List<VersionForTestDto>();
@@ -67,6 +67,44 @@ public class TestService(
         var result = _mapper.Map<TestDto>(test);
         result.TaskVersions = versions;
 
+        return result;
+    }
+
+    public async Task<TestDto> EditAsync(EditTestRequest dto, int id)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var test = await context.Tests
+            .Include(t => t.TestTaskVersions)
+            .FirstOrDefaultAsync(t => t.Id == id)
+            ?? throw new NotFoundException($"Test with {id} id not found");
+
+        if (dto.IsEnabled.HasValue)
+        {
+            test.IsEnabled = dto.IsEnabled.Value;
+        }
+        if (dto.AllowedExecutionTimeInSec.HasValue)
+        {
+            test.AllowedExecutionTimeInSec = dto.AllowedExecutionTimeInSec.Value;
+        }
+        if (dto.Name != null)
+        {
+            test.Name = dto.Name;
+        }
+        if (dto.Description != null)
+        {
+            test.Description = dto.Description;
+        }
+
+        await context.SaveChangesAsync();
+
+        var versions = new List<VersionForTestDto>();
+        var result = _mapper.Map<TestDto>(test);
+        foreach (var testTaskVersion in test.TestTaskVersions)
+        {
+            versions.Add(await _versionService.GetAsync(testTaskVersion.TaskId, testTaskVersion.TaskVersionId));
+        }
+
+        result.TaskVersions = versions;
         return result;
     }
 
