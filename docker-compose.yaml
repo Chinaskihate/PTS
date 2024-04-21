@@ -36,6 +36,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_URLS=http://+:7002
+    ports:
+      - "7002:7002"
     depends_on:
       - db
     restart: always
