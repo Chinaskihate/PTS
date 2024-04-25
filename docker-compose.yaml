@@ -5,7 +5,7 @@ services:
   db:
     container_name: pts-db
     environment:
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=N7fjsk38aMpErz241FjmdkjUowqM
     image: postgres:15
     ports:
       - "5432:5432"
@@ -18,8 +18,8 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_DEFAULT_EMAIL: admin5138371247@admin.com
+      PGADMIN_DEFAULT_PASSWORD: r5136o547KMsoFD84391t
     depends_on:
       - db
     volumes:
