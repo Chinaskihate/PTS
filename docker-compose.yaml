@@ -124,6 +124,19 @@ services:
     depends_on:
       - db
       - admin-api
+  stats-api:
+    container_name: pts-stats-api
+    build:
+      context: .
+      dockerfile: PTS.StatisticsAPI/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
+      - ASPNETCORE_URLS=http://+:7009
+    ports:
+      - "7009:7009"
+    depends_on:
+      - db
+      - admin-api
 volumes:
   db:
   pg-admin:

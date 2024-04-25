@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Common;
 using PTS.Contracts.Constants;
 
-namespace PTS.TestExecutionAPI.Controllers;
-
+namespace PTS.StatisticsAPI.Controllers;
 [ApiController]
 [Route("api/stats")]
 [Authorize]
