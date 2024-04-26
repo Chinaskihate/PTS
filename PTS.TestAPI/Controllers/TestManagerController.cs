@@ -18,7 +18,6 @@ public class TestManagerController(ITestService testService) : ControllerBase
     private readonly ResponseDto _response = new();
 
     [HttpPost]
-    [Authorize(Roles = UserRoles.TestManagerRoles)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateTestRequest dto)
     {
         _response.Result = await _testService.CreateAsync(dto, this.GetUserId());
