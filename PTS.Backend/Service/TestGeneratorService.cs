@@ -1,7 +1,11 @@
-﻿using PTS.Backend.Service.IService;
+﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using PTS.Backend.Service.IService;
+using PTS.Contracts.Constants;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Tests.Dto;
 using PTS.Contracts.Versions.Dto;
+using Serilog;
 
 namespace PTS.Backend.Service;
 
@@ -40,10 +44,14 @@ public class TestGeneratorService(ITaskVersionProxyService versionService, ITest
     {
         var versions = await _versionService.GetAllAsync(new GetTaskVersionsRequestDto
         {
-            ThemeIds = filter.ThemeIds,
+            ThemeIds = filter.ThemeIds.IsNullOrEmpty()
+                ? [Constants.GlobalRootThemeId]
+                : filter.ThemeIds,
         });
 
+        Log.Warning($"Generator get this versions: {JsonConvert.SerializeObject(versions)}");
         var resultVersions = GenerateTaskList(versions, filter);
+        Log.Warning($"Generator created this task list: {JsonConvert.SerializeObject(versions)}");
 
         return resultVersions;
     }
@@ -51,7 +59,6 @@ public class TestGeneratorService(ITaskVersionProxyService versionService, ITest
     private static List<VersionForTestDto> GenerateTaskList(List<VersionForTestDto> filteredTasks,
         GenerateTestRequest request)
     {
-        var tasksCount = filteredTasks.Count;
         return filteredTasks.Take(request.TaskCount).ToList();
     }
 
