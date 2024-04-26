@@ -60,7 +60,7 @@ public class UserService(
         var userRoles = await _userManager.GetRolesAsync(user);
         await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-        if (roles.IsNullOrEmpty())
+        if (!roles.IsNullOrEmpty())
         {
             foreach (var role in roles)
             {
