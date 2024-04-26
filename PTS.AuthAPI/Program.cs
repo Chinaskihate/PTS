@@ -63,6 +63,7 @@ try
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         await CreateUserAsync("root@gmail.com", "rooT12345!", "RootAdmin", UserRoles.RootAdmin);
+        await CreateUserAsync("rooot@gmail.com", "roooT12345!", "RootAdmin", UserRoles.RootAdmin);
         await CreateUserAsync("admin@gmail.com", "admiN12345!", "Admin", UserRoles.Admin);
         await CreateUserAsync("theme@gmail.com", "themE12345!", "Theme", UserRoles.ThemeManager);
         await CreateUserAsync("task@gmail.com", "tasK12345!", "Task", UserRoles.TaskManager);
