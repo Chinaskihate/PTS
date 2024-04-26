@@ -186,7 +186,7 @@ public class TestExecutionService(
     {
         try
         {
-            var testCases = version.TestCases.Where(c => c.IsCorrect == true).ToList();
+            var testCases = version.TestCases.Where(c => !c.IsCorrect.HasValue || c.IsCorrect == true).ToList();
             foreach (var testCase in testCases)
             {
                 var data = new InputData
