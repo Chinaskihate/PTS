@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Common;
 using PTS.Contracts.Constants;
+using PTS.Contracts.Users;
 
 namespace PTS.StatisticsAPI.Controllers;
 [ApiController]
@@ -11,13 +12,28 @@ namespace PTS.StatisticsAPI.Controllers;
 public class StatisticsController(IStatisticsService statisticsService) : ControllerBase
 {
     private readonly IStatisticsService _statisticsService = statisticsService;
-
     private readonly ResponseDto _response = new();
 
-    [HttpGet]
+    [HttpGet("user")]
     public async Task<IActionResult> GetUserTestsStats()
     {
         _response.Result = await _statisticsService.GetUserStats(GetUserId());
+        return Ok(_response);
+    }
+
+    [HttpGet("task/{taskId}")]
+    [Authorize(Roles = UserRoles.TaskManagerRoles)]
+    public async Task<IActionResult> GetTaskStats(int taskId)
+    {
+        _response.Result = await _statisticsService.GetTaskStats(taskId);
+        return Ok(_response);
+    }
+
+    [HttpGet("test/{testId}")]
+    [Authorize(Roles = UserRoles.TestManagerRoles)]
+    public async Task<IActionResult> GetTestStats(int testId)
+    {
+        _response.Result = await _statisticsService.GetTestStats(testId);
         return Ok(_response);
     }
 

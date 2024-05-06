@@ -3,5 +3,7 @@
 namespace PTS.Backend.Service.IService;
 public interface IStatisticsService
 {
-    Task<List<TestStatisticsDto>> GetUserStats(string userId);
+    Task<List<TestResultStatisticsDto>> GetUserStats(string userId);
+    Task<TaskStatisticsDto> GetTaskStats(int taskId);
+    Task<TestStatisticsDto> GetTestStats(int testId);
 }

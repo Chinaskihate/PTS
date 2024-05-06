@@ -31,7 +31,7 @@ public static class TestMappingConfig
                 .ForMember(dto => dto.Test, opt => opt.MapFrom(tr => tr.Test))
                 .ForMember(dto => dto.IsCompleted, opt => opt.MapFrom(tr => tr.SubmissionTime != null))
                 .ForMember(dto => dto.TaskResults, opt => opt.MapFrom(tr => tr.TaskResults));
-            config.CreateMap<TestResult, TestStatisticsDto>()
+            config.CreateMap<TestResult, TestResultStatisticsDto>()
                 .ForMember(dto => dto.TestResultId, opt => opt.MapFrom(tr => tr.Id))
                 .ForMember(dto => dto.Test, opt => opt.MapFrom(tr => tr.Test));
         });

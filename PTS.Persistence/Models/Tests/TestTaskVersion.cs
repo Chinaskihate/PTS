@@ -11,4 +11,8 @@ public class TestTaskVersion
     public int TaskVersionId { get; set; }
     [Required]
     public int TaskId { get; set; }
+    [Required]
+    public int SuccessfulSubmissionCount { get; set; }
+    [Required]
+    public int TotalSubmissionCount { get; set; }
 }

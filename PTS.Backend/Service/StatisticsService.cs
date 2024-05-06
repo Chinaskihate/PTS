@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PTS.Backend.Exceptions.Common;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.PTSTestResults;
 using PTS.Contracts.Statistics;
@@ -22,7 +23,51 @@ public class StatisticsService(
     private readonly ITaskVersionProxyService _taskVersionProxyService = taskVersionProxyService;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<List<TestStatisticsDto>> GetUserStats(string userId)
+    public async Task<TaskStatisticsDto> GetTaskStats(int taskId)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var ttvs = await context.TestTaskVersions.Where(t => t.TaskId == taskId)
+            .ToListAsync();
+        if (ttvs.Count == 0)
+        {
+            throw new NotFoundException($"Task {taskId} does not contain in any test");
+        }
+
+        var result = new TaskStatisticsDto()
+        {
+            TaskId = taskId
+        };
+        foreach (var ttv in ttvs)
+        {
+            result.SuccessfulSubmissionCount += ttv.SuccessfulSubmissionCount;
+            result.TotalSubmissionCount += ttv.TotalSubmissionCount;
+        }
+
+        return result;
+    }
+
+    public async Task<TestStatisticsDto> GetTestStats(int testId)
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        var test = await context.Tests
+            .Include(t => t.TestTaskVersions)
+            .FirstOrDefaultAsync(t => t.Id == testId)
+            ?? throw new NotFoundException($"Test {testId} does not contain in any test");
+
+        var result = new TestStatisticsDto()
+        {
+            TestId = testId
+        };
+        foreach (var ttv in test.TestTaskVersions)
+        {
+            result.SuccessfulTaskSubmissionCount += ttv.SuccessfulSubmissionCount;
+            result.TotalTaskSubmissionCount += ttv.TotalSubmissionCount;
+        }
+
+        return result;
+    }
+
+    public async Task<List<TestResultStatisticsDto>> GetUserStats(string userId)
     {
         using var context = _dbContextFactory.CreateDbContext();
         var testResults = await context.TestResults
@@ -32,7 +77,7 @@ public class StatisticsService(
             .Where(t => t.StudentId == userId && t.SubmissionTime != null)
             .ToListAsync();
 
-        var mappedTestsResults = new List<TestStatisticsDto>();
+        var mappedTestsResults = new List<TestResultStatisticsDto>();
         foreach (var testResult in testResults)
         {
             var test = await _testService.Get(testResult.Test.Id);
@@ -40,7 +85,7 @@ public class StatisticsService(
             {
                 TaskVersionsIds = test.TaskVersions.Select(v => v.Id).ToArray(),
             });
-            var mappedTestResults = _mapper.Map<TestStatisticsDto>(testResult);
+            var mappedTestResults = _mapper.Map<TestResultStatisticsDto>(testResult);
             mappedTestResults.Test = test;
             mappedTestResults.TaskResultStatuses = GetTaskStatuses(testResult, correctAnswers);
             mappedTestsResults.Add(mappedTestResults);

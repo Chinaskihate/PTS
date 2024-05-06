@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PTS.Backend.Exceptions.Common;
-using PTS.Backend.Exceptions.TaskResult;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Constants;
 using PTS.Contracts.PTSTestResults;
@@ -9,6 +8,7 @@ using PTS.Contracts.Tasks;
 using PTS.Contracts.Tasks.Dto;
 using PTS.Contracts.Tests.Dto;
 using PTS.Persistence.DbContexts;
+using PTS.Persistence.Models.Tasks;
 using PTS.Persistence.Models.Tests;
 using Z.Expressions;
 
@@ -107,6 +107,8 @@ public class TestExecutionService(
                     TaskVersionId = taskVersionId,
                     TestResult = testResult
                 });
+                var ttv = testResult.Test.TestTaskVersions.FirstOrDefault(ttv => ttv.TaskVersionId == taskVersionId);
+                ttv.TotalSubmissionCount++;
             }
         }
         else
@@ -122,6 +124,9 @@ public class TestExecutionService(
                 TaskVersionId = dto.TaskVersionId.Value,
                 TestResult = testResult
             };
+            var ttv = testResult.Test.TestTaskVersions.FirstOrDefault(ttv => ttv.TaskVersionId == dto.TaskVersionId.Value);
+            ttv.TotalSubmissionCount++;
+            ttv.SuccessfulSubmissionCount += isCorrect ? 1 : 0;
             context.TaskResults.Add(taskResult);
         }
 
