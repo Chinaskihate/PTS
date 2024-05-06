@@ -5,7 +5,7 @@ metadata:
   labels:
     app: postgres-svc
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: postgres
   ports:
