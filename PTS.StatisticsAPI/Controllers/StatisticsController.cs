@@ -15,9 +15,17 @@ public class StatisticsController(IStatisticsService statisticsService) : Contro
     private readonly ResponseDto _response = new();
 
     [HttpGet("user")]
-    public async Task<IActionResult> GetUserTestsStats()
+    public async Task<IActionResult> GetOwnTestsStats()
     {
         _response.Result = await _statisticsService.GetUserStats(GetUserId());
+        return Ok(_response);
+    }
+
+    [HttpGet("user/{userId}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    public async Task<IActionResult> GetUserTestsStats(string userId)
+    {
+        _response.Result = await _statisticsService.GetUserStats(userId);
         return Ok(_response);
     }
 
