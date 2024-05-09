@@ -22,7 +22,7 @@ public class StatisticsController(IStatisticsService statisticsService) : Contro
     }
 
     [HttpGet("user/{userId}")]
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.AnyAdmin)]
     public async Task<IActionResult> GetUserTestsStats(string userId)
     {
         _response.Result = await _statisticsService.GetUserStats(userId);

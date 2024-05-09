@@ -40,7 +40,12 @@ public class TestService(
 
         foreach (var item in dto.Versions)
         {
-            versions.Add(await _versionService.GetAsync(item.TaskId, item.VersionId));
+            var version = await _versionService.GetAsync(item.TaskId, item.VersionId);
+            if (!version.IsTaskEnabled)
+            {
+                throw new EntityDisabledException($"Version {item.VersionId} with task {item.TaskId} is disabled");
+            }
+            versions.Add(version);
         }
 
         if (versions.IsNullOrEmpty())

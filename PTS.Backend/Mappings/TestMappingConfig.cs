@@ -17,6 +17,7 @@ public static class TestMappingConfig
         {
             config.CreateMap<TaskDto, VersionForTestDto>()
                 .ForMember(dto => dto.TaskId, opt => opt.MapFrom(t => t.Id))
+                .ForMember(dto => dto.IsTaskEnabled, opt => opt.MapFrom(t => t.IsEnabled))
                 .ForMember(dto => dto.Themes, opt => opt.MapFrom(t => t.Themes));
             config.CreateMap<VersionDto, VersionForTestDto>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(t => t.Id));

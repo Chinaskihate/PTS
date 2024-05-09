@@ -23,4 +23,5 @@ public class VersionForTestDto
     public List<ThemeForTestDto> Themes { get; set; }
     public CodeTemplateDto? CodeTemplate { get; set; }
     public List<TestCaseForStudentDto>? TestCases { get; set; }
+    public bool IsTaskEnabled { get; set; }
 }
