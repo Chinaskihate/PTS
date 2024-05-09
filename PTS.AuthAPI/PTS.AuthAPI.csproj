@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PTS.Backend\PTS.Backend.csproj" />
+    <ProjectReference Include="..\PTS.Environment\PTS.Environment.csproj" />
+    <ProjectReference Include="..\PTS.Mail\PTS.Mail.csproj" />
     <ProjectReference Include="..\PTS.Persistence\PTS.Persistence.csproj" />
   </ItemGroup>
 

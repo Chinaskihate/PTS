@@ -6,6 +6,9 @@ using PTS.Backend.Extensions;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
 using PTS.Contracts.Users;
+using PTS.Environment;
+using PTS.Mail.Services;
+using PTS.Mail.Settings;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Helpers;
 using PTS.Persistence.Models.Users;
@@ -42,6 +45,8 @@ try
     builder.Services.AddScoped<ITokenProvider, TokenProvider>();
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+    builder.Services.AddScoped<SmtpSettings>(GetSmtpSettings);
+    builder.Services.AddScoped<IEmailService, SmtpMailService>();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwagger(withBearerAuth: true);
 
@@ -106,3 +111,12 @@ finally
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
 }
+
+SmtpSettings GetSmtpSettings(IServiceProvider sp) => new()
+{
+    Host = Environment.GetEnvironmentVariable(EnvironmentVariables.SmtpSenderHost),
+    Port = int.Parse(Environment.GetEnvironmentVariable(EnvironmentVariables.SmtpSenderPort)),
+    SenderEmail = Environment.GetEnvironmentVariable(EnvironmentVariables.SenderEmail),
+    SenderName = Environment.GetEnvironmentVariable(EnvironmentVariables.SenderName),
+    SenderPassword = Environment.GetEnvironmentVariable(EnvironmentVariables.SenderPassword)
+};

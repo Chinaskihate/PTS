@@ -47,6 +47,22 @@ public class AuthController(
         return Ok(_response);
     }
 
+    [HttpPost("recover")]
+    public async Task<IActionResult> RecoverAccountAsync([FromBody] RecoverAccountRequest dto)
+    {
+        _response.Result = await _authService.RecoverAccountAsync(dto);
+        _response.IsSuccess = true;
+        return Ok(_response);
+    }
+
+    [HttpPost("recover/confirm")]
+    public async Task<IActionResult> ConfirmRecoverAccountAsync([FromBody] ConfirmRecoverAccountRequest dto)
+    {
+        _response.Result = await _authService.ConfirmRecoverAccountAsync(dto);
+        _response.IsSuccess = true;
+        return Ok(_response);
+    }
+
     [HttpPost("{telegramId}/TelegramLogin")]
     [Authorize(Roles = UserRoles.TelegramBot)]
     public async Task<IActionResult> TelegramLogin(string telegramId)

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PTS.AuthAPI.Service.IService;
+using PTS.Backend.Exceptions.Common;
 using PTS.Contracts.Auth.Dto;
 using PTS.Contracts.Users;
+using PTS.Mail.Helpers;
+using PTS.Mail.Services;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Users;
 using Serilog;
@@ -12,17 +15,40 @@ namespace PTS.AuthAPI.Service;
 public class AuthService(
     IDbContextFactory<UserDbContext> dbFactory,
     UserManager<ApplicationUser> userManager,
+    IEmailService mailService,
     IJwtTokenGenerator tokenGenerator,
     ITokenStorer tokenStorer) : IAuthService
 {
     private readonly IDbContextFactory<UserDbContext> _dbFactory = dbFactory;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IEmailService _mailService = mailService;
     private readonly IJwtTokenGenerator _tokenGenerator = tokenGenerator;
     private readonly ITokenStorer _tokenStorer = tokenStorer;
 
     public async Task<bool> CheckTokenAsync(string token)
     {
         return _tokenStorer.CheckToken(token);
+    }
+
+    public async Task<bool> RecoverAccountAsync(RecoverAccountRequest dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email)
+            ?? throw new NotFoundException($"User with email {dto.Email} not found");
+        var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var mail = MessageTemplateHelper.CreateRecoverPasswordMessage(
+            user.UserName,
+            user.Email,
+            resetToken);
+        await _mailService.SendEmailAsync(mail);
+        return true;
+    }
+
+    public async Task<bool> ConfirmRecoverAccountAsync(ConfirmRecoverAccountRequest dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email)
+            ?? throw new NotFoundException($"User with email {dto.Email} not found");
+        await _userManager.ResetPasswordAsync(user, dto.ConfirmationToken, dto.NewPassword);
+        return true;
     }
 
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto loginRequestDto)
