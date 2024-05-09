@@ -108,7 +108,7 @@ public class TestExecutionService(
                     TestResult = testResult
                 });
                 var ttv = testResult.Test.TestTaskVersions.FirstOrDefault(ttv => ttv.TaskVersionId == taskVersionId);
-                ttv.TotalSubmissionCount++;
+                ttv.TotalSubmissionCount++;                
             }
         }
         else
@@ -135,6 +135,7 @@ public class TestExecutionService(
         if (uncompletedTaskVersionIds.Count == 0)
         {
             testResult.SubmissionTime = DateTime.UtcNow;
+            testResult.Test.TotalSubmissionCount++;
         }
 
         await context.SaveChangesAsync();

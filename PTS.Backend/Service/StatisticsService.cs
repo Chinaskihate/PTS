@@ -64,6 +64,8 @@ public class StatisticsService(
             result.TotalTaskSubmissionCount += ttv.TotalSubmissionCount;
         }
 
+        result.TotalSubmissionCount = test.TotalSubmissionCount;
+
         return result;
     }
 
