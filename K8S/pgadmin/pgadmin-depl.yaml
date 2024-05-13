@@ -38,4 +38,4 @@ spec:
   type: NodePort
   ports:
    - port: 80
-     nodePort: 30200
+     nodePort: 31050
