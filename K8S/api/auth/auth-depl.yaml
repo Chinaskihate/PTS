@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-api
+  template:
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      containers:
+      - name: auth-api
+        image: markwantsapi/pts-auth:latest
+        env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: ProductionK8S
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+            - name: SMTP_SENDER_HOST
+              value: smtp.gmail.com
+            - name: SMTP_SENDER_PORT
+              value: "465"
+            - name: SENDER_EMAIL
+              value: markwantsapi@gmail.com
+            - name: SENDER_NAME
+              value: Mark Town
+            - name: SENDER_PASSWORD
+              value: rnmt gqvv eekj yqap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-api-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: auth-api
+  ports:
+  - name: auth-api
+    protocol: TCP
+    port: 80
+    targetPort: 80

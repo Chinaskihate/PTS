@@ -8,6 +8,7 @@ public static class MigrationHelper
 {
     public static IServiceCollection AddUsersDbContextFactory(this IServiceCollection services, string connectionString)
     {
+        Log.Warning($"Connect to db: {connectionString}");
         return services.AddDbContextFactory<UserDbContext>(options =>
         {
             options.EnableSensitiveDataLogging();
@@ -18,6 +19,7 @@ public static class MigrationHelper
 
     public static IServiceCollection AddTaskDbContextFactory(this IServiceCollection services, string connectionString)
     {
+        Log.Warning($"Connect to db: {connectionString}");
         return services.AddDbContextFactory<TaskDbContext>(options =>
         {
             options.EnableSensitiveDataLogging();
@@ -28,6 +30,7 @@ public static class MigrationHelper
 
     public static IServiceCollection AddTestDbContextFactory(this IServiceCollection services, string connectionString)
     {
+        Log.Warning($"Connect to db: {connectionString}");
         return services.AddDbContextFactory<TestDbContext>(options =>
         {
             options.EnableSensitiveDataLogging();

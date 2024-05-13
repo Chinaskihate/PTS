@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-api-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-api
+  template:
+    metadata:
+      labels:
+        app: test-api
+    spec:
+      containers:
+      - name: test-api
+        image: markwantsapi/pts-test:latest
+        env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: ProductionK8S
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-api-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: test-api
+  ports:
+  - name: test-api
+    protocol: TCP
+    port: 80
+    targetPort: 80

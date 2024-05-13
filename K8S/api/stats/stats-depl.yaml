@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats-api-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stats-api
+  template:
+    metadata:
+      labels:
+        app: stats-api
+    spec:
+      containers:
+      - name: stats-api
+        image: markwantsapi/pts-stats:latest
+        env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: ProductionK8S
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stats-api-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: stats-api
+  ports:
+  - name: stats-api
+    protocol: TCP
+    port: 80
+    targetPort: 80

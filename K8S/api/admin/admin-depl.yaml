@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-api-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-api
+  template:
+    metadata:
+      labels:
+        app: admin-api
+    spec:
+      containers:
+      - name: admin-api
+        image: markwantsapi/pts-admin:latest
+        env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: ProductionK8S
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-api-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: admin-api
+  ports:
+  - name: admin-api
+    protocol: TCP
+    port: 80
+    targetPort: 80

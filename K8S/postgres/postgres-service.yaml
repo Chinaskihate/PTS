@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-svc
+  name: postgres
   labels:
-    app: postgres-svc
+    app: postgres
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: postgres
   ports:
-  - port: 5432
+  - name: postgres
+    port: 5432
     targetPort: 5432
