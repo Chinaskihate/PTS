@@ -4,7 +4,7 @@ namespace PTS.Contracts.Auth.Dto;
 public class ConfirmRecoverAccountRequest
 {
     [Required]
-    public string Email { get; set; }
+    public string UserId { get; set; }
     [Required]
     public string ConfirmationToken { get; set; }
     [Required]

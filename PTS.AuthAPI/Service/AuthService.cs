@@ -46,8 +46,8 @@ public class AuthService(
 
     public async Task<bool> ConfirmRecoverAccountAsync(ConfirmRecoverAccountRequest dto)
     {
-        var user = await _userManager.FindByEmailAsync(dto.Email)
-            ?? throw new NotFoundException($"User with email {dto.Email} not found");
+        var user = await _userManager.FindByIdAsync(dto.UserId)
+            ?? throw new NotFoundException($"User with email {dto.UserId} not found");
         await _userManager.ResetPasswordAsync(user, dto.ConfirmationToken, dto.NewPassword);
         return true;
     }
