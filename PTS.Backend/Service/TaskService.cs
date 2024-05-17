@@ -50,9 +50,6 @@ public class TaskService(
     public async Task<TaskDto> EditAsync(int id, EditTaskRequest dto)
     {
         using var context = _dbContextFactory.CreateDbContext();
-        //var themes = await context.Themes
-        //    .Where(th => dto.ThemeIds.Contains(th.Id))
-        //    .ToListAsync();
 
         var task = await context.Tasks
             //.Include(t => t.Themes)

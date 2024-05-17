@@ -38,6 +38,7 @@ public class AuthService(
         var mail = MessageTemplateHelper.CreateRecoverPasswordMessage(
             user.UserName,
             user.Email,
+            user.Id,
             resetToken);
         await _mailService.SendEmailAsync(mail);
         return true;

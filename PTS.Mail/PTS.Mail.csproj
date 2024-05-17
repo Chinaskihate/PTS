@@ -10,4 +10,8 @@
     <PackageReference Include="MailKit" Version="4.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PTS.Backend\PTS.Backend.csproj" />
+  </ItemGroup>
+
 </Project>

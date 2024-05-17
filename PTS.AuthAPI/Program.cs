@@ -5,6 +5,7 @@ using PTS.AuthAPI.Service.IService;
 using PTS.Backend.Extensions;
 using PTS.Backend.Service;
 using PTS.Backend.Service.IService;
+using PTS.Backend.Utils;
 using PTS.Contracts.Users;
 using PTS.Environment;
 using PTS.Mail.Services;
@@ -31,6 +32,7 @@ try
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));
 
+    SD.PasswordRecoveryLink = builder.Configuration["FrontendPasswordRecoveryLink"];
     // Add services to the container.
 
     builder.AddCorsPTS();
