@@ -9,6 +9,7 @@ using PTS.Mail.Services;
 using PTS.Persistence.DbContexts;
 using PTS.Persistence.Models.Users;
 using Serilog;
+using System.Web;
 
 namespace PTS.AuthAPI.Service;
 
@@ -48,7 +49,7 @@ public class AuthService(
     {
         var user = await _userManager.FindByIdAsync(dto.UserId)
             ?? throw new NotFoundException($"User with email {dto.UserId} not found");
-        await _userManager.ResetPasswordAsync(user, dto.ConfirmationToken, dto.NewPassword);
+        await _userManager.ResetPasswordAsync(user, HttpUtility.UrlDecode(dto.ConfirmationToken), dto.NewPassword);
         return true;
     }
 
